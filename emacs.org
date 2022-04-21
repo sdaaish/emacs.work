@@ -9,6 +9,7 @@
 #+CATEGORIES: editing
 #+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6)
 #+SETUPFILE: vendor/org-html-themes/org/theme-readtheorg-local.setup
+#+HTML_HEAD: <style>pre.src{background:#143131;color:white;} </style>
 * Introduction
 This is my version of an configuration file for GNU Emacs. I now use ~straight~ to install packages and ~use-package~ to configure them. Previously I used ~package.el~, the built-in package-handling system with ~use-package~ but it became a bit awkward and slow when I wanted to upgrade installed packages. This configuration should start without problems but will take a very long time the first time, since ~straight~ needs to clone and build all packages. And ~Git~ is needed before this to work.
 
@@ -194,6 +195,46 @@ Use ~amx~ smart executionlist.
   (customize-set-variable 'ivy-rich-path-style 'abbrev))
 #+end_src
 
+* Variables
+Settings for variables.
+#+begin_src emacs-lisp
+(defun my/read-lines (filePath)
+  "Return a list of lines of a file at filePath."
+  (if (file-exists-p filePath)
+      (with-temp-buffer
+        (insert-file-contents filePath)
+        (split-string (buffer-string) "\n" t))))
+
+(defun my/fullpath (filepath directory)
+  "Concatenate directory to names in filepath and return as list."
+  (let (value)
+    (setq list (my/read-lines filepath))
+    (dolist (shortfile list value)
+      (setq fullpath (concat directory shortfile))
+      (setq value (cons fullpath value)))))
+
+(setq my/private-elfile (expand-file-name "personal.el" user-emacs-directory))
+(if (file-exists-p my/private-elfile)
+    (load-file my/private-elfile))
+
+(defvar my/init-dir (file-name-directory (or load-file-name (buffer-file-name))))
+(defvar my/emacs-orgfile (expand-file-name "emacs.org" my/init-dir))
+(defvar my/emacs-elfile (expand-file-name "init.el" my/init-dir))
+
+(defconst my/org-directory (expand-file-name "org/" my/onedrive-dir))
+(defconst my/notes-file (expand-file-name "inbox.org" my/org-directory))
+(defconst my/diary-file (expand-file-name "diary.org" my/org-directory))
+(defconst my/org-agenda-files (expand-file-name ".agenda-files" my/org-directory))
+(defvar my/refile-targets (my/read-lines (expand-file-name ".target-files"  my/org-directory)))
+;; My org-files directory
+(setq org-directory my/org-directory)
+;; Org-agenda can read from a file
+(setq org-agenda-files my/org-agenda-files)
+;; Store notes here
+(setq org-default-notes-file my/notes-file)
+;; Choose targets for refile from this file
+(setq org-refile-targets '((my/refile-targets :maxlevel . 3)))
+#+end_src
 * Custom settings
 #+begin_src emacs-lisp
 (bind-key "C-c t" 'toggle-truncate-lines)
@@ -367,8 +408,7 @@ Make undo more intuitive.
     (global-undo-tree-mode 1)
     (setq undo-tree-visualizer-diff t)
     :bind (("C-z" . undo)
-           ("C-S-z" . undo-tree-redo))
-    :chords ("uu" . undo-tree-visualize))
+           ("C-S-z" . undo-tree-redo)))
 #+END_SRC
 ** hungry-mode
 Delete whitespace more efficiently.
@@ -382,8 +422,7 @@ Jump to any character.
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :bind (("C-." . avy-goto-char)
-           ("C-:" . avy-goto-char-2))
-    :chords ("kk" . avy-goto-line))
+           ("C-:" . avy-goto-char-2)))
 #+END_SRC
 ** Smart parenthesis
 Automatically insert parenthesis.
@@ -483,12 +522,6 @@ Group buffers based on projectile.
 ;; Hydra keymapping support
 (use-package hydra)
 #+END_SRC
-** Use-package chords
-Use chords as keyboard shortcuts.
-#+begin_src emacs-lisp
-  (use-package use-package-chords
-        :config (key-chord-mode 1))
-#+end_src
 ** Projectile
 Find or switch to projects easy, and use ~counsel-projectile~.
 #+BEGIN_SRC emacs-lisp
@@ -513,7 +546,7 @@ Find or switch to projects easy, and use ~counsel-projectile~.
       ("b"  projectile-switch-to-buffer-other-window "buffer")
       ("q"  nil                                      "cancel" :color blue))
 
-    (defhydra hydra-projectile (:color teal :hint nil)
+(defhydra hydra-projectile (:color teal :hint nil)
       "
                    PROJECTILE: %(projectile-project-root)
 
@@ -665,3 +698,235 @@ Manage github things from emacs.
   (use-package forge
     :after gh)
 #+end_src
+* Reverting
+Map <F5> to revert-buffer. But only revert if the file is not modified.
+#+BEGIN_SRC emacs-lisp
+(global-set-key
+  (kbd "<f5>")
+  (lambda (&optional force-reverting)
+  "Interactive call to revert-buffer. Ignoring the auto-save
+  file and not requesting for confirmation. When the current buffer
+  is modified, the command refuses to revert it, unless you specify
+  the optional argument: force-reverting to true."
+  (interactive "P")
+  ;;(message "force-reverting value is %s" force-reverting)
+  (if (or force-reverting (not (buffer-modified-p)))
+  (revert-buffer :ignore-auto :noconfirm)
+  (error "The buffer has been modified"))))
+#+END_SRC
+Setup autorevert.
+#+begin_src emacs-lisp
+(customize-set-variable 'global-auto-revert-mode t)
+(customize-set-variable 'global-auto-revert-non-file-buffers t)
+#+end_src
+* Bookmarks
+Save bookmarks all the time.
+#+BEGIN_SRC emacs-lisp
+(customize-set-variable 'bookmark-save-flag 1)
+(customize-set-variable 'bookmark-version-control t)
+#+END_SRC
+* Org-mode stuff
+Read [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org Beginners Customization Guide]] for info about this.
+** Org-mode variables
+*** Other variables
+Customize org-mode settings.
+#+BEGIN_SRC emacs-lisp
+(setq org-use-sub-superscripts '{})
+(setq org-export-with-sub-superscripts '{})
+(setq org-export-coding-system 'utf-8)
+(setq org-export-backends '(ascii html latex odt org))
+(setq org-export-use-babel nil)
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+(setq org-agenda-skip-scheduled-if-done t)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown "repeated-after-deadline")
+(setq org-agenda-include-diary nil)
+(setq org-agenda-span 14)
+(setq org-log-done 'time)
+(setq org-log-redeadline 'time)
+(setq org-log-reschedule 'time)
+(setq org-log-refile 'time)
+(setq org-log-into-drawer t)
+(setq org-enforce-todo-checkbox-dependencies t)
+(setq org-enforce-todo-dependencies t)
+(setq org-agenda-dim-blocked-tasks t)
+(setq org-fast-tag-selection-single-key t)
+(setq org-use-fast-todo-selection t)
+(setq org-enable-priority-commands nil)
+(setq org-src-preserve-indentation t)
+  #+END_SRC
+*** Refile
+Refiling notes settings.
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-outline-path-complete-in-steps nil)
+#+END_SRC
+** Org-modules
+To be able to execute code in org mode these should be loaded.
+#+begin_src emacs-lisp
+(require 'ob-shell)
+(require 'ob-awk)
+(require 'ob-python)
+(require 'ob-C)
+#+end_src
+** Org-files
+My org-files for Todo-list and agenda. Store the filenames to use for agenda in a separate file.
+*** Keywords
+Keywords, keybindings and colors for headlines in org-mode.
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords
+        '((sequence "TODO(t!)" "IN-PROGRESS(p!)" "NEXT(n!)" "WAITING(w@/!)" "|" "DONE(d@)")
+          (sequence "IDEA(i!)" "READ(r!)" "|")
+          (sequence "REPORT(z!)" "BUG(b!)" "|" "RESOLVED(x@)")
+          (sequence "|" "CANCELED(c@)" "DELEGATED(l@)" "SOMEDAY(s!)")))
+  (setq org-todo-keyword-faces
+        '(("TODO" . (:foreground "cyan" :weight bold))
+          ("IN-PROGRESS" . (:foreground "yellow" :weight bold))
+          ("NEXT" . (:foreground "yellow" :weight bold))
+          ("DONE" . (:foreground "green" :weight bold))
+          ("WAITING" . (:foreground "red" :weight bold))
+          ("SOMEDAY" . (:foreground "gray" :weight bold))
+          ("IDEA" . (:foreground "dark orange" :weight bold))
+          ("READ" . (:foreground "dark orange" :weight bold))
+          ("BUG" . (:foreground "magenta" :weight bold))
+          ("REPORT" . (:foreground "cyan" :weight bold))))
+  (bind-key "C-c l" 'org-store-link)
+  (bind-key "C-c a" 'org-agenda)
+  (bind-key "C-c c" 'org-capture)
+#+END_SRC
+*** Org Archiving
+Separate file for archiving stuff. Use datetree syntax.
+#+BEGIN_SRC emacs-lisp
+(setq my/org-archive-file (expand-file-name "archive/archive.org" my/org-directory))
+(when (not (file-exists-p (file-name-directory my/org-archive-file)))
+      (make-directory (file-name-directory my/org-archive-file) t))
+(setq org-archive-location (concat my/org-archive-file "::datetree/* From %s"))
+#+END_SRC
+** Org custom agenda
+For more info about this, see [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][Org Agenda Custom Commands]].
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("c" "Weekly schedule"
+           ((agenda ""
+                    ((org-agenda-span 10)
+                     (org-agenda-start-on-weekday nil)
+                     (org-agenda-repeating-timestamp-show-all t)
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline 'scheduled))))
+            (alltodo ""
+                     ((org-agenda-time-grid nil)
+                      (org-deadline-warning-days 90))))
+           ((org-agenda-compact-blocks t)))
+
+          ("d" "Upcoming dates"
+           ((agenda ""
+                    ((org-agenda-entry-types '(:deadline))))
+            (agenda ""
+                    ((org-agenda-entry-types '(:scheduled)))))
+           ((org-agenda-time-grid nil)
+            (org-agenda-start-on-weekday nil)
+            (org-agenda-span 1)
+            (org-deadline-warning-days 14)
+            (org-agenda-time-grid nil)
+            (org-agenda-compact-blocks t)))
+
+          ("l" "Log for last week"
+           ((agenda ""
+                    ((org-agenda-span 14)
+                     (org-agenda-start-day "-7d")
+                     (org-agenda-repeating-timestamp-show-all t)
+                     (org-agenda-include-inactive-timestamps t))))
+           ((org-agenda-compact-blocks t)))
+
+          ("h" . "Hemma|Huset")
+          ("hh" "Agenda and Home-related tasks" tags-todo "Hemma|Huset"
+           ((agenda "")
+            (org-agenda-sorting-strategy '(priority-up effort-down))))
+          ("hc" "Todo" tags-todo "Cyklar"
+           ((agenda "")
+            (todo "TODO|IN-PROGRESS")
+            (org-agenda-sorting-strategy '(priority-up effort-down))))
+          ("hf" "Todo" tags-todo "Fordon"
+           ((agenda "")
+            (todo "TODO|IN-PROGRESS")
+            (org-agenda-sorting-strategy '(priority-up effort-down))))
+          ("hu" "Todo" tags-todo "Huset"
+           ((agenda "")
+            (todo "TODO|IN-PROGRESS")
+            (org-agenda-sorting-strategy '(priority-up effort-down))))
+
+          ("w" "Agenda and Office-related tasks" tags-todo "work|office"
+           ((agenda "")
+            (todo "TODO|IN-PROGRESS")
+            (org-agenda-sorting-strategy '(priority-up effort-down))))
+          ))
+#+END_SRC
+** Org-templates
+A few templates to speed up capture.
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates
+        `(("t" "To do items" entry (file+headline my/notes-file "To Do Items")
+           "* TODO %^{Description of todo}\nAdded: %U\n%?" :prepend t)
+
+          ;; Multiline for blog-notes
+          ("b" "Blog idea")
+          ("be" "Emacs idea" entry (file+headline my/notes-file "Emacs")
+           "* IDEA %^{Title} :Emacs:\nAdded: %U\n%?" :prepend t)
+          ("bb" "Blog idea" entry (file+headline my/notes-file "Blog Topics")
+           "* IDEA %^{Title} :Blog:\nAdded: %U\n%?" :prepend t)
+
+          ;;Links
+          ("l" "Link" entry (file+headline my/notes-file "Links")
+           "* [[%^C][%^{Title}]]  %^G\nAdded: %U\n%?" :prepend t)
+
+          ;; Notes
+          ("n" "Note" entry (file+headline my/notes-file "Notes")
+           "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+
+          ;; Idea
+          ("i" "Idea" entry (file+headline my/notes-file "Someday")
+           "* IDEA %^{Title}\nAdded: %U\n%?" :prepend t)
+
+          ;; Journal
+          ("j" "Journal" entry (file+olp+datetree my/diary-file)
+           "* %^{Enter title}\n%U\n%?" :clock-in t :clock-resume t)
+
+          ;; Multiline for watching stuff
+          ("f" "Filmtips")
+          ("fm" "Movies" entry (file+headline my/notes-file "Film")
+           "* %^{Titel} :Film:\nAdded on %T\n%?" :prepend t)
+          ("ft" "Video" entry (file+headline my/notes-file "Video")
+           "* %^{Titel} :Video:Info:\nAdded on %T\n%^L\n%?" :prepend t)
+
+          ;; Notes for code
+          ("c" "Coding stuff")
+          ("cc" "note with code" entry (file+headline my/notes-file "Code")
+           "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|bat|html}\n%^C\n#+end_src\n")
+          ("cs" "note with code, source" entry (file+headline my/notes-file "Code")
+           "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|bat|html}\n%^C\n#+end_src\n%a\n")
+
+          ;; Reports and bugs
+          ("r" "Reporting")
+          ("rb" "Bug" entry (file+headline my/notes-file "Reports")
+           "* BUG %^{Description of bug} %^G\nAdded: %U\n%?")
+          ("rr" "Report" entry (file+headline my/notes-file "Reports")
+           "* REPORT %^{Description of report} %^G\nAdded: %U\n#+begin_example\n%^C\n#+end_example\n%?")
+          ))
+#+END_SRC
+
+** Org tangle init files
+Untangle init files automatically when save with org-babel.
+From [[https://github.com/daviwil/emacs-from-scratch/blob/9388cf6ecd9b44c430867a5c3dad5f050fdc0ee1/init.el][Emacs From Scratch: Everything in Babel]].
+#+begin_src emacs-lisp
+(defun my/org-babel-tangle-config ()
+  (when (string-equal (buffer-file-name) my/emacs-orgfile)
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+#+end_src
+** Export GHF markdown
+Github-flavoured markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-gfm
+    :after ox)
+#+END_SRC
