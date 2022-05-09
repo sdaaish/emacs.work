@@ -59,8 +59,8 @@ The file to load before ~init.el~. This will be created after ~org-babel-tangle~
 (message "*** Reading from %s ***" (buffer-name))
 
 ;; Debug startup
-(setq debug-on-error t)
-(setq debug-on-quit t)
+(setq debug-on-error nil)
+(setq debug-on-quit nil)
 
 ;; Garbage collection
 ;; Increase the garbage collection threshold to make startup faster
@@ -680,6 +680,14 @@ Only in windows.
 #+BEGIN_SRC emacs-lisp
   (use-package bat-mode)
 #+END_SRC
+** json-mode
+#+begin_src emacs-lisp
+(use-package json-mode
+  :hook (json-mode .
+		   (lambda ()
+		     (make-local-variable 'js-indent-level)
+		     (setq js-indent-level 2))))
+#+end_src
 * Git and projects
 ** Magit
 Magit is a Git-tool, probably the best porcelain in the world!
@@ -930,3 +938,36 @@ Github-flavoured markdown
   (use-package ox-gfm
     :after ox)
 #+END_SRC
+** Perl
+#+begin_src emacs-lisp
+(defalias 'perl-mode 'cperl-mode)
+#+end_src
+** LSP
+From https://emacs-lsp.github.io/lsp-mode/page/installation/
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         ((cperl-mode . lsp-deferred)
+	 (powershell-mode . lsp-deferred))
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp lsp-deferred)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+  :config
+  (which-key-mode))
+#+end_src
