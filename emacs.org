@@ -117,7 +117,8 @@ Bootstrap straight.
 #+end_src
 ** Org mode
 #+begin_src emacs-lisp
-(require 'org)
+(use-package org
+  :straight (:type git :repo "git://git.sv.gnu.org/emacs/org-mode.git"))
 #+end_src
 ** No littering
 #+begin_src emacs-lisp
@@ -136,7 +137,7 @@ Bootstrap straight.
            ([remap describe-variable] . counsel-describe-variable)
            ([remap describe-function] . counsel-describe-function)))
 #+end_src
-
+** Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :diminish
@@ -300,45 +301,6 @@ Display time as 24-hour format
 (setq display-time-24hr-format t)
 #+END_SRC
 
-** Super-save
-Save buffers when idle
-#+BEGIN_SRC emacs-lisp
-(use-package super-save
-  :diminish
-  :custom
-  (add-to-list 'super-save-triggers 'ace-window)
-  (add-to-list 'super-save-triggers 'magit-status)
-  (add-to-list 'super-save-hook-triggers 'find-file-hook)
-  (super-save-auto-save-when-idle t)
-  (super-save-idle-duration 8)
-  (super-save-remote-files nil)
-  (super-save-exclude '(".gpg"))
-  (auto-save-default nil)
-  :config (super-save-mode t))
-#+END_SRC
-** Save current position
-Go back to where you last were in the file.
-#+BEGIN_SRC emacs-lisp
-  ;; Save point position between sessions
-  (use-package saveplace
-    :config
-    (save-place-mode 1)
-    (setq save-place-file (expand-file-name ".places" no-littering-var-directory)))
-#+END_SRC
-** Save history
-Save a history of edited files.
-#+BEGIN_SRC emacs-lisp
-  (setq savehist-file (expand-file-name ".savehist" no-littering-var-directory))
-  (savehist-mode 1)
-  (setq
-   history-length 50
-   history-delete-duplicates t
-   savehist-save-minibuffer-history 1
-   savehist-additional-variables
-   '(kill-ring
-     search-ring
-     regexp-search-ring))
-#+END_SRC
 ** Rainbows
 Use different colors for delimeters to increase readability.
 #+BEGIN_SRC emacs-lisp
@@ -602,7 +564,12 @@ Changes for local keyboard.
     :straight (:type built-in)
     :commands dired
     :bind (:map dired-mode-map
-                ("'" . diredp-up-directory-reuse-dir-buffer)))
+                ("'" . dired-single-up-directory)))
+#+end_src
+** Dired single
+Reuse buffers for dired
+#+begin_src emacs-lisp
+(use-package dired-single)
 #+end_src
 ** Narrowing
 Enable narrowing.
@@ -659,6 +626,22 @@ Save a history of edited files.
      search-ring
      regexp-search-ring))
 #+END_SRC
+** Super-save
+Save buffers when idle
+#+BEGIN_SRC emacs-lisp
+(use-package super-save
+  :diminish
+  :custom
+  (add-to-list 'super-save-triggers 'ace-window)
+  (add-to-list 'super-save-triggers 'magit-status)
+  (add-to-list 'super-save-hook-triggers 'find-file-hook)
+  (super-save-auto-save-when-idle t)
+  (super-save-idle-duration 8)
+  (super-save-remote-files nil)
+  (super-save-exclude '(".gpg"))
+  (auto-save-default nil)
+  :config (super-save-mode t))
+#+END_SRC
 * Language support
 Add support for different programming languages and configuration files.
 ** Powershell mode
@@ -680,13 +663,148 @@ Only in windows.
 #+BEGIN_SRC emacs-lisp
   (use-package bat-mode)
 #+END_SRC
-** json-mode
+** Markdown-mode
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :commands
+    (markdown-mode gfm-mode)
+  :mode
+    (("README\\.md\\'" . gfm-mode)
+    ("\\.md\\'" . markdown-mode)
+    ("\\.markdown\\'" . markdown-mode))
+  :init
+    (setq markdown-command "multimarkdown")
+  :config
+    (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode)))
+#+END_SRC
+** Markdown preview mode
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-preview-mode
+    :commands markdown-preview)
+#+END_SRC
+** SSH-config
+Add mode for configuring .ssh/config and other related to SSH.
+#+BEGIN_SRC emacs-lisp
+(use-package ssh-config-mode
+:config
+ (add-to-list 'auto-mode-alist '("/\\.ssh/config\\'"     . ssh-config-mode))
+ (add-to-list 'auto-mode-alist '("/sshd?_config\\'"      . ssh-config-mode))
+ (add-to-list 'auto-mode-alist '("/known_hosts\\'"       . ssh-known-hosts-mode))
+ (add-to-list 'auto-mode-alist '("/authorized_keys2?\\'" . ssh-authorized-keys-mode))
+ (add-hook 'ssh-config-mode-hook 'turn-on-font-lock)
+)
+#+END_SRC
+** Git
+Modes for editing git-files
+*** git-modes
+#+BEGIN_SRC emacs-lisp
+  (use-package git-modes
+    :config
+    (add-to-list 'auto-mode-alist (cons "/.dockerignore\\'" 'gitignore-mode)))
+#+END_SRC
+** Yara-files
+Mode that supports editing of Yara-files.
+#+BEGIN_SRC emacs-lisp
+  (use-package yara-mode)
+#+END_SRC
+** Elastic search mode
+#+BEGIN_SRC emacs-lisp
+  (use-package es-mode
+        :config
+    (add-to-list 'auto-mode-alist '("\\.es$" . es-mode)))
+#+END_SRC
+** Logstash-mode
+Use logstash-mode for conf-files in logstash-directories.
+#+BEGIN_SRC emacs-lisp
+  (use-package logstash-conf
+    :mode  (("logstash.*\\.conf\\'" . logstash-conf-mode)
+            ("pipeline.*\\.conf\\'" . logstash-conf-mode)))
+#+END_SRC
+** ini-mode
+Windows ini-files.
+#+BEGIN_SRC emacs-lisp
+  (use-package ini-mode
+    :mode "\\.ini\\'")
+#+END_SRC
+** CSV
+Read csv-files.
+#+BEGIN_SRC emacs-lisp
+(use-package csv-mode)
+#+END_SRC
+** Docker file mode
+Support Dockerfile.
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode)
+#+END_SRC
+** Docker compose
+Support Docker Compose files.
+#+BEGIN_SRC emacs-lisp
+  (use-package docker-compose-mode)
+#+END_SRC
+** Toml-Mode
+Support .toml-files, eg for Hugo.
+#+BEGIN_SRC emacs-lisp
+  (use-package toml-mode)
+#+END_SRC
+** X509
+Support for certificate files, with a hydra to navigate options.
+#+BEGIN_SRC emacs-lisp
+  (use-package x509-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.cer\\'" . x509-mode))
+    (add-to-list 'auto-mode-alist '("\\.crt\\'" . x509-mode))
+    (add-to-list 'auto-mode-alist '("\\.crl\\'" . x509-mode))
+    (add-to-list 'auto-mode-alist '("\\.csr\\'" . x509-mode))
+    (add-to-list 'auto-mode-alist '("\\.pem\\'" . x509-mode))
+    (add-to-list 'auto-mode-alist '("\\.key\\'" . x509-mode))
+    (defhydra hydra-x509 (:color blue :columns 2)
+      "X509 commands"
+      ("a" x509-viewasn1 "View ASN1")
+      ("c" x509-viewcert "View certificate")
+      ("d" x509-viewdh "View DH")
+      ("k" x509-viewkey "View key")
+      ("r" x509-viewcrl "View CRL")
+      ("q" nil "cancel"))
+    :bind (:map x509-mode-map
+                ("h" . hydra-x509/body))
+    )
+#+END_SRC
+** JSON-mode
+Edit JSON-files.
 #+begin_src emacs-lisp
 (use-package json-mode
   :hook (json-mode .
 		   (lambda ()
 		     (make-local-variable 'js-indent-level)
 		     (setq js-indent-level 2))))
+#+end_src
+** Editorconfig
+To get automatic settings for git repositories. https://editorconfig.org/
+#+begin_src emacs-lisp
+  (use-package editorconfig
+    :hook (prog-mode . editorconfig-mode))
+#+end_src
+*
+** Info-colors
+Colorisation of Info-text.
+#+begin_src emacs-lisp
+(use-package info-colors
+  :hook (Info-selection . info-colors-fontify-node)
+  :custom-face
+  (info-colors-lisp-code-block ((t (:foreground "LightSkyBlue" :weight normal))))
+  (info-xref ((t (:foreground "DeepSkyBlue" :weight normal))))
+  (Info-quoted ((t (:foreground "SkyBlue" :weight normal)))))
+#+end_src
+** LUA
+For nmap script-engine files.
+#+begin_src emacs-lisp
+  (use-package lua-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+    (add-to-list 'auto-mode-alist '("\\.nse$" . lua-mode))
+    (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 #+end_src
 * Git and projects
 ** Magit
@@ -932,7 +1050,8 @@ From [[https://github.com/daviwil/emacs-from-scratch/blob/9388cf6ecd9b44c430867a
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
 #+end_src
-** Export GHF markdown
+** Org Exports
+*** Export GHF markdown
 Github-flavoured markdown
 #+BEGIN_SRC emacs-lisp
   (use-package ox-gfm
@@ -971,3 +1090,8 @@ From https://emacs-lsp.github.io/lsp-mode/page/installation/
   :config
   (which-key-mode))
 #+end_src
+*** Export markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-org-md
+    :after ox)
+#+END_SRC
