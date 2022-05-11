@@ -9,7 +9,7 @@
 #+CATEGORIES: editing
 #+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6)
 #+SETUPFILE: vendor/org-html-themes/org/theme-readtheorg-local.setup
-#+HTML_HEAD: <style>pre.src{background:#143131;color:white;} </style>
+#+HTML_HEAD: <style>pre.src{background:#131331;color:white;} </style>
 * Introduction
 This is my version of an configuration file for GNU Emacs. I now use ~straight~ to install packages and ~use-package~ to configure them. Previously I used ~package.el~, the built-in package-handling system with ~use-package~ but it became a bit awkward and slow when I wanted to upgrade installed packages. This configuration should start without problems but will take a very long time the first time, since ~straight~ needs to clone and build all packages. And ~Git~ is needed before this to work.
 
@@ -806,6 +806,39 @@ For nmap script-engine files.
     (add-to-list 'auto-mode-alist '("\\.nse$" . lua-mode))
     (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 #+end_src
+** Perl
+#+begin_src emacs-lisp
+(defalias 'perl-mode 'cperl-mode)
+#+end_src
+** LSP
+From https://emacs-lsp.github.io/lsp-mode/page/installation/
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         ((cperl-mode . lsp-deferred)
+	 (powershell-mode . lsp-deferred))
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp lsp-deferred)
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+  :config
+  (which-key-mode))
+#+end_src
 * Git and projects
 ** Magit
 Magit is a Git-tool, probably the best porcelain in the world!
@@ -1057,39 +1090,6 @@ Github-flavoured markdown
   (use-package ox-gfm
     :after ox)
 #+END_SRC
-** Perl
-#+begin_src emacs-lisp
-(defalias 'perl-mode 'cperl-mode)
-#+end_src
-** LSP
-From https://emacs-lsp.github.io/lsp-mode/page/installation/
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ((cperl-mode . lsp-deferred)
-	 (powershell-mode . lsp-deferred))
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp lsp-deferred)
-
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-;; if you are ivy user
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; optional if you want which-key integration
-(use-package which-key
-  :config
-  (which-key-mode))
-#+end_src
 *** Export markdown
 #+BEGIN_SRC emacs-lisp
   (use-package auto-org-md
