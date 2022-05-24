@@ -417,7 +417,7 @@ Automatically insert parenthesis.
 Help to keep config clean.
 #+begin_src emacs-lisp
 (use-package ws-butler
-:hook (prog-mode . ws-butler-mode))
+  :hook ((prog-mode conf-mode) . ws-butler-mode))
 #+end_src
 ** ibuffer
 Use ibuffer for buffers. Sort them accordingly. ibuffer is a built in command but use use-package for simpler configuration.
