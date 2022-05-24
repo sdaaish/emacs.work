@@ -196,6 +196,24 @@ Use ~amx~ smart executionlist.
   (customize-set-variable 'ivy-rich-path-style 'abbrev))
 #+end_src
 
+* Packages
+Various packages
+** Yas
+Yet Another Snippet tool.
+#+begin_src emacs-lisp
+(use-package yasnippet)
+#+end_src
+** Extra snippets
+Load more snippets
+#+begin_src emacs-lisp
+(use-package yasnippet-snippets
+  :after yasnippet)
+#+end_src
+** ivy-yasnippet
+#+begin_src emacs-lisp
+(use-package ivy-yasnippet
+  :bind ("C-x y" . ivy-yasnippet))
+#+end_src
 * Variables
 Settings for variables.
 #+begin_src emacs-lisp
@@ -237,6 +255,7 @@ Settings for variables.
 (setq org-refile-targets '((my/refile-targets :maxlevel . 3)))
 #+end_src
 * Custom settings
+** Visual settings
 #+begin_src emacs-lisp
 (bind-key "C-c t" 'toggle-truncate-lines)
   (tool-bar-mode -1)
@@ -582,6 +601,16 @@ Enable narrowing.
 ;; Press y or n for yes or no
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
+** Hippie expand
+Hippie expands text automagically.
+#+begin_src emacs-lisp
+(global-set-key [remap dabbrev-expand] 'hippie-expand)
+#+end_src
+** Abbrev mode
+Abbrev autocorrects words.
+#+begin_src emacs-lisp
+(abbrev-mode t)
+#+end_src
 * Backup
 Backup and autosave options, + history
 ** Backup of files
