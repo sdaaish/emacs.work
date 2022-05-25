@@ -346,16 +346,16 @@ Use aggressive mode for indentation. Used to be auto-indent, but aggressive seem
     (which-key-mode t)
     (setq which-key-idle-delay 0))
 #+END_SRC
-*** Company-mode
+** Company-mode
 Complete anything
 #+BEGIN_SRC emacs-lisp
-  (use-package company
+(use-package company
   :diminish
+  :hook (after-init . (global-company-mode t))
   :config
-    (global-company-mode t)
-    (setq company-idle-delay 0))
+  (setq company-idle-delay 0
+	company-minimum-prefix-length 2))
 #+END_SRC
-
 ** ace-window
 Switch windows and frames quickly.
 #+BEGIN_SRC emacs-lisp
@@ -609,7 +609,14 @@ Hippie expands text automagically.
 ** Abbrev mode
 Abbrev autocorrects words.
 #+begin_src emacs-lisp
-(abbrev-mode t)
+(setq-default abbrev-mode t)
+#+end_src
+** Increase text scale
+Shortcuts to increase font-size.
+#+begin_src emacs-lisp
+(bind-key "C-+" 'text-scale-increase)
+(bind-key "C--" 'text-scale-decrease)
+(customize-set-variable 'text-scale-mode-step 1.05)
 #+end_src
 * Backup
 Backup and autosave options, + history
