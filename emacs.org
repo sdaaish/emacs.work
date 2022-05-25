@@ -683,16 +683,17 @@ Add support for different programming languages and configuration files.
 ** Powershell mode
 Powershell-mode is useful.
 #+BEGIN_SRC emacs-lisp
-  (use-package powershell
-    :straight (powershell :fork t)
-    :commands powershell
-    :config
-    (setq powershell-eldoc-def-files (list (expand-file-name "eldoc/powershell-eldoc.el" user-emacs-directory)))
-    (if (eq system-type 'gnu/linux)
-        (setq powershell-location-of-exe "/usr/bin/pwsh")
-      (setq powershell-location-of-exe "pwsh.exe"))
-    (setq explicit-powershell\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
-    (setq explicit-pwsh\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-")))
+(use-package powershell
+  :straight (powershell :fork t)
+  :commands powershell
+  :config
+  (setq powershell-eldoc-def-files (list (expand-file-name "eldoc/powershell-eldoc.el" user-emacs-directory)))
+  (if (eq system-type 'gnu/linux)
+      (setq powershell-location-of-exe "/usr/bin/pwsh")
+    (setq powershell-location-of-exe "pwsh.exe"))
+  (setq explicit-powershell\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
+  (setq explicit-pwsh\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
+  :custom-face (font-lock-variable-name-face ((t (:foreground "#d98026" :weight normal)))))
 #+END_SRC
 ** Dos-mode
 Only in windows.
