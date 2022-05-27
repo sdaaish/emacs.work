@@ -413,6 +413,12 @@ Automatically insert parenthesis.
   :hook
   ((org-mode prog-mode) . smartparens-mode))
 #+END_SRC
+** Parens-mode
+Add visual pairing of parenthesis.
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+(customize-set-variable 'show-paren-style 'mixed)
+#+end_src
 ** Whitespace butler 
 Help to keep config clean.
 #+begin_src emacs-lisp
