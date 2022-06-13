@@ -139,22 +139,24 @@ Bootstrap straight.
 #+end_src
 ** Ivy
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :diminish
-    :config
-    (ivy-mode 1)
-    (setq	ivy-use-virtual-buffers t
-          ivy-count-format "(%d/%d) "
-          enable-recursive-minibuffers t)
-    :bind
-    ("C-x C-f" . counsel-find-file)
-    ("C-c C-S-F" . counsel-recentf)
-    ("C-c C-S-R" . ivy-resume)
-    ("C-s" . swiper)
-    ("C-r" . swiper)
-    ("C-c g" . counsel-git)
-    ("C-c j" . counsel-git-grep)
-    ("C-c k" . counsel-ag))
+(use-package ivy
+  :diminish
+  :config
+  (ivy-mode 1)
+  (setq	ivy-use-virtual-buffers t
+        ivy-count-format "(%d/%d) "
+        enable-recursive-minibuffers t)
+  :bind
+  ("C-x C-f" . counsel-find-file)
+  ("C-c C-S-F" . counsel-recentf)
+  ("C-c C-S-R" . ivy-resume)
+  ("C-s" . swiper)
+  ("C-r" . swiper)
+  ("C-c g" . counsel-git)
+  ("C-c j" . counsel-git-grep)
+  ("C-c k" . counsel-ag)
+  ("C-c r" . counsel-rg)
+  ("C-c G" . counsel-google))
 #+end_src
 ** Amx
 Use ~amx~ smart executionlist.
@@ -195,7 +197,6 @@ Use ~amx~ smart executionlist.
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)
   (customize-set-variable 'ivy-rich-path-style 'abbrev))
 #+end_src
-
 * Packages
 Various packages
 ** Yas
@@ -213,6 +214,18 @@ Load more snippets
 #+begin_src emacs-lisp
 (use-package ivy-yasnippet
   :bind ("C-x y" . ivy-yasnippet))
+#+end_src
+** Silversearcher
+Use ~ag~ to search for stuff. Requires ~silversearcher-ag~ to be installed in the system.
+#+begin_src emacs-lisp
+  (use-package ag
+    :commands counsel-ag)
+#+end_src
+** Ripgrep
+Use ripgrep to search for files. See [[https://rgel.readthedocs.io/][Manual]].
+#+begin_src emacs-lisp
+(use-package rg
+  :config (rg-enable-default-bindings))
 #+end_src
 * Variables
 Settings for variables.
