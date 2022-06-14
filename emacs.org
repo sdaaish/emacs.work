@@ -712,6 +712,7 @@ Powershell-mode is useful.
     (setq powershell-location-of-exe "pwsh.exe"))
   (setq explicit-powershell\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
   (setq explicit-pwsh\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
+  (customize-set-variable 'powershell-indent 4)
   :custom-face (font-lock-variable-name-face ((t (:foreground "#d98026" :weight normal)))))
 #+END_SRC
 ** Dos-mode
@@ -839,8 +840,8 @@ Edit JSON-files.
 ** Editorconfig
 To get automatic settings for git repositories. https://editorconfig.org/
 #+begin_src emacs-lisp
-  (use-package editorconfig
-    :hook (prog-mode . editorconfig-mode))
+(use-package editorconfig
+  :hook (prog-mode . editorconfig-mode))
 #+end_src
 *
 ** Info-colors
@@ -1151,3 +1152,14 @@ Github-flavoured markdown
   (use-package auto-org-md
     :after ox)
 #+END_SRC
+* Other packages
+** Elfeed
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed-org
+  :custom
+  (rmh-elfeed-org-files (list (expand-file-name "elfeed.org" my/org-directory)))
+  (rmh-elfeed-org-auto-ignore-invalid-feeds nil)
+  :config (elfeed-org))
+(use-package elfeed
+  :custom-face (elfeed-search-unread-title-face ((t (:weight normal :foreground "khaki2")))))
+#+end_src
