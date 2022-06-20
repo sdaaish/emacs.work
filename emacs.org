@@ -271,8 +271,9 @@ Settings for variables.
 ** Visual settings
 #+begin_src emacs-lisp
 (bind-key "C-c t" 'toggle-truncate-lines)
-  (tool-bar-mode -1)
-  (set-scroll-bar-mode nil)
+(tool-bar-mode -1)
+(set-scroll-bar-mode nil)
+(menu-bar-mode -1)
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
