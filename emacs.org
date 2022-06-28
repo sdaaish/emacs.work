@@ -358,6 +358,10 @@ Use aggressive mode for indentation. Used to be auto-indent, but aggressive seem
   (use-package aggressive-indent
     :config (global-aggressive-indent-mode t))
 #+END_SRC
+#+begin_src emacs-lisp
+(setq-default tab-width 2)
+(setq-default tab-always-indent 'complete)
+#+end_src
 ** which-key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
