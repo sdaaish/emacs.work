@@ -996,6 +996,13 @@ To be able to execute code in org mode these should be loaded.
 (require 'ob-python)
 (require 'ob-C)
 #+end_src
+*** Babel for Powershell
+Execute powershell from org-mode.
+#+begin_src emacs-lisp
+(use-package ob-powershell
+	:custom (ob-powershell-powershell-command "pwsh")
+	:config (require 'ob-powershell))
+#+end_src
 ** Org-files
 My org-files for Todo-list and agenda. Store the filenames to use for agenda in a separate file.
 *** Keywords
