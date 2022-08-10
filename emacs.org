@@ -303,24 +303,37 @@ Use Cascadia Code Nerd Font
                         :weight 'normal
                         :width  'condensed)
 (add-to-list 'default-frame-alist '(font . "CaskaydiaCove Nerd Font-11"))
-(set-frame-font "CaskaydiaCove Nerd Font-11" nil t)
+(set-frame-font "CaskaydiaCove Nerd Font 11" nil t)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
-** User interface
+** Emoji fonts
+Show and insert emojis.
+From https://ianyepan.github.io/posts/emacs-emojis/
 #+begin_src emacs-lisp
-    (use-package all-the-icons)
-    (use-package doom-modeline)
-    (use-package doom-themes)
-    (use-package elisp-demos)
-  (add-hook 'after-init-hook 'doom-modeline-init)
+(use-package emojify
+  :config
+  (when (member "Segoe UI Emoji" (font-family-list))
+    (set-fontset-font
+     t 'symbol (font-spec :family "Segoe UI Emoji") nil 'prepend))
+  (setq emojify-display-style 'unicode)
+  (setq emojify-emoji-styles '(unicode)))
+#+end_src
+** User interface
+*** Themes and modeline
+#+begin_src emacs-lisp
+(use-package all-the-icons)
+(use-package doom-modeline)
+(use-package doom-themes)
+(use-package elisp-demos)
+(add-hook 'after-init-hook 'doom-modeline-init)
 
-  ;; Configure `doom-modeline'
-  (customize-set-variable 'doom-modeline-height 15)
-  (customize-set-variable 'doom-modeline-bar-width 6)
-  (customize-set-variable 'doom-modeline-minor-modes t)
-  (customize-set-variable 'doom-modeline-buffer-file-name-style 'truncate-except-project)
+;; Configure `doom-modeline'
+(customize-set-variable 'doom-modeline-height 15)
+(customize-set-variable 'doom-modeline-bar-width 6)
+(customize-set-variable 'doom-modeline-minor-modes t)
+(customize-set-variable 'doom-modeline-buffer-file-name-style 'truncate-except-project)
 (load-theme 'doom-snazzy t)
-  #+end_src
+#+end_src
 *** No beeps
 #+BEGIN_SRC emacs-lisp
 ;;No beep
