@@ -432,8 +432,9 @@ Make undo more intuitive.
 Delete whitespace more efficiently.
 #+BEGIN_SRC emacs-lisp
 (use-package hungry-delete
-:config
-(global-hungry-delete-mode t))
+	:config
+	(global-hungry-delete-mode t)
+	:custom (hungry-delete-except-modes '(minibuffer-mode)))
 #+END_SRC
 ** avy
 Jump to any character.
@@ -622,16 +623,20 @@ To check the expanded macro. Useful with ~use-package~.
 ** Dired customizations
 Changes for local keyboard.
 #+begin_src emacs-lisp
-  (use-package dired
-    :straight (:type built-in)
-    :commands dired
-    :bind (:map dired-mode-map
-                ("'" . dired-single-up-directory)))
+(use-package dired
+  :straight (:type built-in)
+	:hook ( dired-mode . dired-hide-details-mode))
 #+end_src
 ** Dired single
 Reuse buffers for dired
 #+begin_src emacs-lisp
-(use-package dired-single)
+(use-package dired-single
+  :bind (("C-x d" . dired-single-magic-buffer)
+         ([remap dired-find-file] . dired-single-buffer)
+         ([remap dired-mouse-find-file-other-window] . dired-single-buffer-mouse)
+         ([remap dired-up-directory] . dired-single-up-directory)
+         (:map dired-mode-map
+               ("'" . dired-single-up-directory))))
 #+end_src
 ** Narrowing
 Enable narrowing.
