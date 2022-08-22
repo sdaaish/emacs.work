@@ -285,7 +285,7 @@ User name and email among others.
 My custom functions for various stuff.
 ** Open emacs org-file
 #+begin_src emacs-lisp
-(defun my/find-emacs-config-file ()
+(defun my/find-emacs-org-file ()
 	"Opens my emacs org config file."
 	(interactive)
 	(find-file (expand-file-name "emacs.org" user-emacs-directory)))
@@ -296,6 +296,17 @@ My custom functions for various stuff.
 	"Opens my emacs init-file."
 	(interactive)
 	(find-file (expand-file-name "init.el" user-emacs-directory)))
+#+end_src
+** Steal the mouse
+From Steve Yegge's talk on emacs. [[https://youtu.be/6ZWp05OW1c0][Stevey's Tech Talk E41: Emacs Part 2 - Emergency Emacs]]
+#+begin_src emacs-lisp
+(defun my/steal-mouse ()
+"Moves the mouse to the upper right corner."
+	(interactive)
+	(and window-system
+			 (set-mouse-position
+				(selected-frame)
+				(1- (frame-width)) -1)))
 #+end_src
 * Custom settings
 ** Visual settings
