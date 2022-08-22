@@ -235,6 +235,8 @@ Use ripgrep to search for files. See [[https://rgel.readthedocs.io/][Manual]].
 #+end_src
 * Variables
 Settings for variables.
+** Functions that load config files
+These are custom functions to load settings into list for org-agenda.
 #+begin_src emacs-lisp
 (defun my/read-lines (filePath)
   "Return a list of lines of a file at filePath."
@@ -250,15 +252,21 @@ Settings for variables.
     (dolist (shortfile list value)
       (setq fullpath (concat directory shortfile))
       (setq value (cons fullpath value)))))
-
+#+end_src
+** Load local personal settings
+User name and email among others.
+#+begin_src emacs-lisp
 (setq my/private-elfile (expand-file-name "personal.el" user-emacs-directory))
 (if (file-exists-p my/private-elfile)
     (load-file my/private-elfile))
-
+#+end_src
+** Set paths and filenames
+#+begin_src emacs-lisp
 (defvar my/init-dir (file-name-directory (or load-file-name (buffer-file-name))))
 (defvar my/emacs-orgfile (expand-file-name "emacs.org" my/init-dir))
 (defvar my/emacs-elfile (expand-file-name "init.el" my/init-dir))
 
+(defconst my/onedrive-dir (getenv "OneDrive"))
 (defconst my/org-directory (expand-file-name "org/" my/onedrive-dir))
 (defconst my/notes-file (expand-file-name "inbox.org" my/org-directory))
 (defconst my/diary-file (expand-file-name "diary.org" my/org-directory))
