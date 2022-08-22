@@ -1250,3 +1250,8 @@ Test out emacs packages without installing.
 	(add-to-list 'package-archives
 							 '("melpa" .		"https://melpa.org/packages/") t))
 #+end_src
+** HTTP-server
+This is an http-server running in emacs.
+#+begin_src emacs-lisp
+(use-package simple-httpd)
+#+end_src
