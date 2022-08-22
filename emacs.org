@@ -273,6 +273,22 @@ Settings for variables.
 ;; Choose targets for refile from this file
 (setq org-refile-targets '((my/refile-targets :maxlevel . 3)))
 #+end_src
+* Functions
+My custom functions for various stuff.
+** Open emacs org-file
+#+begin_src emacs-lisp
+(defun my/find-emacs-config-file ()
+	"Opens my emacs org config file."
+	(interactive)
+	(find-file (expand-file-name "emacs.org" user-emacs-directory)))
+#+end_src
+** Open emacs init-file
+#+begin_src emacs-lisp
+(defun my/find-emacs-init-file ()
+	"Opens my emacs init-file."
+	(interactive)
+	(find-file (expand-file-name "init.el" user-emacs-directory)))
+#+end_src
 * Custom settings
 ** Visual settings
 #+begin_src emacs-lisp
