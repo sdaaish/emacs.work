@@ -1242,3 +1242,11 @@ Github-flavoured markdown
 (use-package elfeed
   :custom-face (elfeed-search-unread-title-face ((t (:weight normal :foreground "khaki2")))))
 #+end_src
+** try
+Test out emacs packages without installing.
+#+begin_src emacs-lisp
+(use-package try
+	:config
+	(add-to-list 'package-archives
+							 '("melpa" .		"https://melpa.org/packages/") t))
+#+end_src
