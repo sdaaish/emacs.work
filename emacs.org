@@ -492,7 +492,7 @@ Add visual pairing of parenthesis.
 (show-paren-mode t)
 (customize-set-variable 'show-paren-style 'mixed)
 #+end_src
-** Whitespace butler 
+** Whitespace butler
 Help to keep config clean.
 #+begin_src emacs-lisp
 (use-package ws-butler
@@ -1230,6 +1230,49 @@ Github-flavoured markdown
 *** Jira
 #+begin_src emacs-lisp
 (use-package ox-jira)
+#+end_src
+** Org publish
+Publish org-files to html and others.
+#+begin_src emacs-lisp
+(customize-set-variable 'org-publish-use-timestamps-flag nil)
+(setq my/org-publish-directory (expand-file-name "Publish/" my/onedrive-dir))
+(setq org-publish-project-alist
+      `(("Org" :components ("org-notes" "org-images" "org-css" "org-pdf"))
+				("org-notes"
+         :base-directory ,my/org-directory
+         :base-extension "org"
+				 :exclude "level-[0-9]\.org"
+         :publishing-directory ,my/org-publish-directory
+         :publishing-function org-html-publish-to-html
+         :recursive t
+				 :headline-levels 4
+				 :auto-preamble t
+				 :auto-sitemap t
+				 :html-head "<link rel=\"stylesheet\"
+                    href=\"/css/simple.css\"
+                    type=\"text/css\"/>"
+				 :html-head-extra "<style>pre.src{background:#343131;color:white;} </style>"
+				 :html-validation-link nil)
+
+        ("org-images"
+         :base-directory ,(expand-file-name "images/" my/org-directory)
+         :base-extension "jpg\\|gif\\|png"
+				 :publishing-directory ,(expand-file-name "images/" my/org-publish-directory)
+         :publishing-function org-publish-attachment)
+
+				("org-css"
+				 :base-directory ,(expand-file-name "css/" my/org-directory)
+				 :base-extension "css\\|js"
+				 :publishing-directory ,(expand-file-name "css/" my/org-publish-directory)
+				 :recursive t
+				 :publishing-function org-publish-attachment)
+
+				("org-pdf"
+				 :base-directory ,my/org-directory
+				 :base-extension "pdf"
+				 :publishing-directory ,(expand-file-name "static/" my/org-publish-directory)
+				 :recursive t
+				 :publishing-function org-publish-attachment)))
 #+end_src
 * Other packages
 ** Elfeed
