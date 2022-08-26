@@ -1296,5 +1296,6 @@ Test out emacs packages without installing.
 ** HTTP-server
 This is an http-server running in emacs.
 #+begin_src emacs-lisp
-(use-package simple-httpd)
+(use-package simple-httpd
+	:config (setq httpd-root my/org-publish-directory))
 #+end_src
