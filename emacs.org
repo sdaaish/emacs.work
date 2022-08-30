@@ -3,8 +3,8 @@
 #+SUBTITLE: A new personal emacs configuration for work
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :results silent
 #+STARTUP: show2levels indent
-#+OPTIONS: H:5 num:nil tags:nil toc:3 timestamps:t
 #+DESCRIPTION: Loading emacs configuration using org-babel
+#+OPTIONS: H:5 num:nil tags:nil toc:3 timestamps:t
 #+TAGS: emacs
 #+CATEGORIES: editing
 #+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6)
@@ -112,8 +112,8 @@ Bootstrap straight.
 (straight-use-package 'use-package)
 (customize-set-variable 'straight-use-package-by-default t)
 (customize-set-variable 'straight-host-usernames
-			'((github . "sdaaish")
-			  (gitlab . "sdaaish")))
+      '((github . "sdaaish")
+        (gitlab . "sdaaish")))
 (setq load-prefer-newer t)
 #+end_src
 ** Org mode
@@ -149,7 +149,7 @@ Bootstrap straight.
   :diminish
   :config
   (ivy-mode 1)
-  (setq	ivy-use-virtual-buffers t
+  (setq ivy-use-virtual-buffers t
         ivy-count-format "(%d/%d) "
         enable-recursive-minibuffers t)
   :bind
@@ -286,27 +286,34 @@ My custom functions for various stuff.
 ** Open emacs org-file
 #+begin_src emacs-lisp
 (defun my/find-emacs-org-file ()
-	"Opens my emacs org config file."
-	(interactive)
-	(find-file (expand-file-name "emacs.org" user-emacs-directory)))
+  "Opens my emacs org config file."
+  (interactive)
+  (find-file (expand-file-name "emacs.org" user-emacs-directory)))
 #+end_src
 ** Open emacs init-file
 #+begin_src emacs-lisp
 (defun my/find-emacs-init-file ()
-	"Opens my emacs init-file."
-	(interactive)
-	(find-file (expand-file-name "init.el" user-emacs-directory)))
+  "Opens my emacs init-file."
+  (interactive)
+  (find-file (expand-file-name "init.el" user-emacs-directory)))
 #+end_src
 ** Steal the mouse
 From Steve Yegge's talk on emacs. [[https://youtu.be/6ZWp05OW1c0][Stevey's Tech Talk E41: Emacs Part 2 - Emergency Emacs]]
 #+begin_src emacs-lisp
 (defun my/steal-mouse ()
 "Moves the mouse to the upper right corner."
-	(interactive)
-	(and window-system
-			 (set-mouse-position
-				(selected-frame)
-				(1- (frame-width)) -1)))
+  (interactive)
+  (and window-system
+       (set-mouse-position
+        (selected-frame)
+        (1- (frame-width)) -1)))
+#+end_src
+** Include lisp
+Include local lisp-files.
+#+begin_src emacs-lisp
+(when (file-exists-p (expand-file-name "work/lisp" "~"))
+  (add-to-list 'load-path (expand-file-name "work/lisp" "~")))
+(require 'cbc.el)
 #+end_src
 * Custom settings
 ** Visual settings
@@ -357,17 +364,20 @@ From https://ianyepan.github.io/posts/emacs-emojis/
 *** Themes and modeline
 #+begin_src emacs-lisp
 (use-package all-the-icons)
-(use-package doom-modeline)
-(use-package doom-themes)
-(use-package elisp-demos)
-(add-hook 'after-init-hook 'doom-modeline-init)
+(use-package doom-modeline
+  :hook (after-init . doom-modeline-mode)
+  :custom
+  (doom-modeline-height 15)
+  (doom-modeline-bar-width 6)
+  (doom-modeline-minor-modes t)
+  (doom-modeline-buffer-file-name-style 'truncate-except-project))
 
-;; Configure `doom-modeline'
-(customize-set-variable 'doom-modeline-height 15)
-(customize-set-variable 'doom-modeline-bar-width 6)
-(customize-set-variable 'doom-modeline-minor-modes t)
-(customize-set-variable 'doom-modeline-buffer-file-name-style 'truncate-except-project)
-(load-theme 'doom-snazzy t)
+;; Custom theme from doom
+(use-package doom-themes
+  :config
+  (load-theme 'doom-snazzy t))
+(use-package elisp-demos)
+
 #+end_src
 *** No beeps
 #+BEGIN_SRC emacs-lisp
@@ -409,6 +419,7 @@ Use aggressive mode for indentation. Used to be auto-indent, but aggressive seem
 #+begin_src emacs-lisp
 (setq-default tab-width 2)
 (setq-default tab-always-indent 'complete)
+(setq-default indent-tabs-mode nil)
 #+end_src
 ** which-key
 #+BEGIN_SRC emacs-lisp
@@ -425,7 +436,7 @@ Complete anything
   :diminish
   :config
   (setq company-idle-delay 0
-	company-minimum-prefix-length 2)
+  company-minimum-prefix-length 2)
   (global-company-mode t))
 #+END_SRC
 ** ace-window
@@ -467,9 +478,9 @@ Make undo more intuitive.
 Delete whitespace more efficiently.
 #+BEGIN_SRC emacs-lisp
 (use-package hungry-delete
-	:config
-	(global-hungry-delete-mode t)
-	:custom (hungry-delete-except-modes '(minibuffer-mode)))
+  :config
+  (global-hungry-delete-mode t)
+  :custom (hungry-delete-except-modes '(minibuffer-mode)))
 #+END_SRC
 ** avy
 Jump to any character.
@@ -660,7 +671,7 @@ Changes for local keyboard.
 #+begin_src emacs-lisp
 (use-package dired
   :straight (:type built-in)
-	:hook ( dired-mode . dired-hide-details-mode))
+  :hook ( dired-mode . dired-hide-details-mode))
 #+end_src
 ** Dired single
 Reuse buffers for dired
@@ -759,6 +770,7 @@ Save buffers when idle
   (super-save-remote-files nil)
   (super-save-exclude '(".gpg"))
   (auto-save-default nil)
+  (auto-save-no-message t)
   :config (super-save-mode t))
 #+END_SRC
 * Language support
@@ -897,9 +909,9 @@ Edit JSON-files.
 #+begin_src emacs-lisp
 (use-package json-mode
   :hook (json-mode .
-		   (lambda ()
-		     (make-local-variable 'js-indent-level)
-		     (setq js-indent-level 2))))
+       (lambda ()
+         (make-local-variable 'js-indent-level)
+         (setq js-indent-level 2))))
 #+end_src
 ** Editorconfig
 To get automatic settings for git repositories. https://editorconfig.org/
@@ -940,7 +952,7 @@ From https://emacs-lsp.github.io/lsp-mode/page/installation/
   (setq lsp-keymap-prefix "C-c l")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          ((cperl-mode . lsp-deferred)
-	 (powershell-mode . lsp-deferred))
+   (powershell-mode . lsp-deferred))
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp lsp-deferred)
@@ -1053,8 +1065,8 @@ To be able to execute code in org mode these should be loaded.
 Execute powershell from org-mode.
 #+begin_src emacs-lisp
 (use-package ob-powershell
-	:custom (ob-powershell-powershell-command "pwsh")
-	:config (require 'ob-powershell))
+  :custom (ob-powershell-powershell-command "pwsh")
+  :config (require 'ob-powershell))
 #+end_src
 ** Org-files
 My org-files for Todo-list and agenda. Store the filenames to use for agenda in a separate file.
@@ -1235,44 +1247,44 @@ Github-flavoured markdown
 Publish org-files to html and others.
 #+begin_src emacs-lisp
 (customize-set-variable 'org-publish-use-timestamps-flag nil)
-(setq my/org-publish-directory (expand-file-name "Publish/" my/onedrive-dir))
+(setq my/org-publish-directory (expand-file-name "www/Publish" "~"))
 (setq org-publish-project-alist
       `(("Org" :components ("org-notes" "org-images" "org-css" "org-pdf"))
-				("org-notes"
+        ("org-notes"
          :base-directory ,my/org-directory
          :base-extension "org"
-				 :exclude "level-[0-9]\.org"
+         :exclude "level-[0-9]\.org"
          :publishing-directory ,my/org-publish-directory
          :publishing-function org-html-publish-to-html
          :recursive t
-				 :headline-levels 4
-				 :auto-preamble t
-				 :auto-sitemap t
-				 :html-head "<link rel=\"stylesheet\"
+         :headline-levels 4
+         :auto-preamble t
+         :auto-sitemap t
+         :html-head "<link rel=\"stylesheet\"
                     href=\"/css/simple.css\"
                     type=\"text/css\"/>"
-				 :html-head-extra "<style>pre.src{background:#343131;color:white;} </style>"
-				 :html-validation-link nil)
+         :html-head-extra "<style>pre.src{background:#343131;color:white;} </style>"
+         :html-validation-link nil)
 
         ("org-images"
          :base-directory ,(expand-file-name "images/" my/org-directory)
          :base-extension "jpg\\|gif\\|png"
-				 :publishing-directory ,(expand-file-name "images/" my/org-publish-directory)
+         :publishing-directory ,(expand-file-name "images/" my/org-publish-directory)
          :publishing-function org-publish-attachment)
 
-				("org-css"
-				 :base-directory ,(expand-file-name "css/" my/org-directory)
-				 :base-extension "css\\|js"
-				 :publishing-directory ,(expand-file-name "css/" my/org-publish-directory)
-				 :recursive t
-				 :publishing-function org-publish-attachment)
+        ("org-css"
+         :base-directory ,(expand-file-name "css/" my/org-directory)
+         :base-extension "css\\|js"
+         :publishing-directory ,(expand-file-name "css/" my/org-publish-directory)
+         :recursive t
+         :publishing-function org-publish-attachment)
 
-				("org-pdf"
-				 :base-directory ,my/org-directory
-				 :base-extension "pdf"
-				 :publishing-directory ,(expand-file-name "static/" my/org-publish-directory)
-				 :recursive t
-				 :publishing-function org-publish-attachment)))
+        ("org-pdf"
+         :base-directory ,my/org-directory
+         :base-extension "pdf"
+         :publishing-directory ,(expand-file-name "static/" my/org-publish-directory)
+         :recursive t
+         :publishing-function org-publish-attachment)))
 #+end_src
 * Other packages
 ** Elfeed
@@ -1289,13 +1301,15 @@ Publish org-files to html and others.
 Test out emacs packages without installing.
 #+begin_src emacs-lisp
 (use-package try
-	:config
-	(add-to-list 'package-archives
-							 '("melpa" .		"https://melpa.org/packages/") t))
+  :config
+  (add-to-list 'package-archives
+               '("melpa" .    "https://melpa.org/packages/") t))
 #+end_src
 ** HTTP-server
 This is an http-server running in emacs.
 #+begin_src emacs-lisp
 (use-package simple-httpd
-	:config (setq httpd-root my/org-publish-directory))
+  :disabled nil
+  :commands httpd-start
+  :config (customize-set-variable 'httpd-root my/org-publish-directory))
 #+end_src
