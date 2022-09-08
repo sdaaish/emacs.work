@@ -1162,54 +1162,40 @@ For more info about this, see [[http://orgmode.org/worg/org-tutorials/org-custom
 ** Org-templates
 A few templates to speed up capture.
 #+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates
-        `(("t" "To do items" entry (file+headline my/notes-file "To Do Items")
-           "* TODO %^{Description of todo}\nAdded: %U\n%?" :prepend t)
+(setq org-capture-templates
+      `(("t" "To do items" entry (file+headline my/notes-file "To Do Items")
+         "* TODO %^{Description of todo}\nAdded: %U\n\n%?" :prepend t)
 
-          ;; Multiline for blog-notes
-          ("b" "Blog idea")
-          ("be" "Emacs idea" entry (file+headline my/notes-file "Emacs")
-           "* IDEA %^{Title} :Emacs:\nAdded: %U\n%?" :prepend t)
-          ("bb" "Blog idea" entry (file+headline my/notes-file "Blog Topics")
-           "* IDEA %^{Title} :Blog:\nAdded: %U\n%?" :prepend t)
+        ;;Links
+        ("l" "Link" entry (file+headline my/notes-file "Links")
+         "* [[%^C][%^{Title}]]  %^G\nAdded: %U\n\n%?" :prepend t)
 
-          ;;Links
-          ("l" "Link" entry (file+headline my/notes-file "Links")
-           "* [[%^C][%^{Title}]]  %^G\nAdded: %U\n%?" :prepend t)
+        ;; Notes
+        ("n" "Note" entry (file+headline my/notes-file "Notes")
+         "* %^{Title} :NOTE:\nAdded: %U\n%a\n\n%?" :clock-in t :clock-resume t)
 
-          ;; Notes
-          ("n" "Note" entry (file+headline my/notes-file "Notes")
-           "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+        ;; Idea
+        ("i" "Idea" entry (file+headline my/notes-file "Someday")
+         "* IDEA %^{Title}\nAdded: %U\n%?" :prepend t)
 
-          ;; Idea
-          ("i" "Idea" entry (file+headline my/notes-file "Someday")
-           "* IDEA %^{Title}\nAdded: %U\n%?" :prepend t)
+        ;; Journal
+        ("j" "Journal" entry (file+olp+datetree my/diary-file)
+         "* %^{Enter title}\n%U\n%?" :clock-in t :clock-resume t)
 
-          ;; Journal
-          ("j" "Journal" entry (file+olp+datetree my/diary-file)
-           "* %^{Enter title}\n%U\n%?" :clock-in t :clock-resume t)
+        ;; Notes for code
+        ("c" "Coding stuff")
+        ("cc" "note with code" entry (file+headline my/notes-file "Code")
+         "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|python|html}\n%^C\n#+end_src\n")
+        ("cs" "note with code, source" entry (file+headline my/notes-file "Code")
+         "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|python|html}\n%^C\n#+end_src\n%a\n")
 
-          ;; Multiline for watching stuff
-          ("f" "Filmtips")
-          ("fm" "Movies" entry (file+headline my/notes-file "Film")
-           "* %^{Titel} :Film:\nAdded on %T\n%?" :prepend t)
-          ("ft" "Video" entry (file+headline my/notes-file "Video")
-           "* %^{Titel} :Video:Info:\nAdded on %T\n%^L\n%?" :prepend t)
-
-          ;; Notes for code
-          ("c" "Coding stuff")
-          ("cc" "note with code" entry (file+headline my/notes-file "Code")
-           "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|bat|html}\n%^C\n#+end_src\n")
-          ("cs" "note with code, source" entry (file+headline my/notes-file "Code")
-           "* %? \nAdded: %U\n#+begin_src %^{Language?|emacs-lisp|sh|powershell|bat|html}\n%^C\n#+end_src\n%a\n")
-
-          ;; Reports and bugs
-          ("r" "Reporting")
-          ("rb" "Bug" entry (file+headline my/notes-file "Reports")
-           "* BUG %^{Description of bug} %^G\nAdded: %U\n%?")
-          ("rr" "Report" entry (file+headline my/notes-file "Reports")
-           "* REPORT %^{Description of report} %^G\nAdded: %U\n#+begin_example\n%^C\n#+end_example\n%?")
-          ))
+        ;; Reports and bugs
+        ("r" "Reporting")
+        ("rb" "Bug" entry (file+headline my/notes-file "Reports")
+         "* BUG %^{Description of bug} %^G\nAdded: %U\n\n%?")
+        ("rr" "Report" entry (file+headline my/notes-file "Reports")
+         "* REPORT %^{Description of report} %^G\nAdded: %U\n#+begin_example\n%^C\n#+end_example\n\n%?")
+        ))
 #+END_SRC
 
 ** Org tangle init files
@@ -1242,6 +1228,10 @@ Github-flavoured markdown
 *** Jira
 #+begin_src emacs-lisp
 (use-package ox-jira)
+#+end_src
+*** Org reveal
+#+begin_src emacs-lisp
+(use-package org-reveal)
 #+end_src
 ** Org publish
 Publish org-files to html and others.
