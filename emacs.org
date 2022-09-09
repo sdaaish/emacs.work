@@ -130,6 +130,11 @@ Bootstrap straight.
 #+begin_src emacs-lisp
 (use-package no-littering)
 #+end_src
+** Diminish
+Reduces text in the minibar.
+#+begin_src emacs-lisp
+(use-package diminish)
+#+end_src
 ** Helpful
 #+begin_src emacs-lisp
     (use-package helpful
@@ -917,6 +922,7 @@ Edit JSON-files.
 To get automatic settings for git repositories. https://editorconfig.org/
 #+begin_src emacs-lisp
 (use-package editorconfig
+  :diminish
   :hook (prog-mode . editorconfig-mode))
 #+end_src
 *
