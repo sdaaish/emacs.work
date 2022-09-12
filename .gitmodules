@@ -4,3 +4,6 @@
 [submodule "etc/yasnippet/snippets"]
 	path = etc/yasnippet/snippets
 	url = https://github.com/sdaaish/snippets.git
+[submodule "vendor/reveal.js"]
+	path = vendor/reveal.js
+	url = https://github.com/hakimel/reveal.js.git

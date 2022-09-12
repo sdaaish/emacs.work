@@ -1051,6 +1051,7 @@ Customize org-mode settings.
 (setq org-use-fast-todo-selection t)
 (setq org-enable-priority-commands nil)
 (setq org-src-preserve-indentation t)
+(setq org-confirm-babel-evaluate 'my/org-confirm-babel-evaluate)
   #+END_SRC
 *** Refile
 Refiling notes settings.
@@ -1059,6 +1060,13 @@ Refiling notes settings.
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-outline-path-complete-in-steps nil)
 #+END_SRC
+*** Custom to disable verification of evaluation.
+From [[https://gitlab.com/spudlyo/dotfiles/-/blob/master/emacs/.config/emacs/init.el][Mike Hamrick, GitLab]].
+#+begin_src emacs-lisp
+(defun my/org-confirm-babel-evaluate (lang body)
+  "Don't confirm code execution for these languages."
+  (not (member lang '("python" "emacs-lisp" "shell" "powershell" "perl" "elisp" "eshell"))))
+#+end_src
 ** Org-modules
 To be able to execute code in org mode these should be loaded.
 #+begin_src emacs-lisp
@@ -1071,7 +1079,7 @@ To be able to execute code in org mode these should be loaded.
 Execute powershell from org-mode.
 #+begin_src emacs-lisp
 (use-package ob-powershell
-  :custom (ob-powershell-powershell-command "pwsh")
+  :custom (ob-powershell-powershell-command "pwsh -NoLogo -NoProfile")
   :config (require 'ob-powershell))
 #+end_src
 ** Org-files
@@ -1236,8 +1244,12 @@ Github-flavoured markdown
 (use-package ox-jira)
 #+end_src
 *** Org reveal
+Use Org Reveal for presentations. Is called =ox-reveal= at Melpa.
 #+begin_src emacs-lisp
-(use-package org-reveal)
+(use-package ox-reveal
+  :custom (org-reveal-root (concat "file:///" (expand-file-name "vendor/reveal.js" user-emacs-directory)))
+  :config
+  (require 'ox-reveal))
 #+end_src
 ** Org publish
 Publish org-files to html and others.
