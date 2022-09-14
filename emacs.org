@@ -16,6 +16,20 @@ This is my version of an configuration file for GNU Emacs. I now use ~straight~ 
 Load [[file:emacs.org][emacs.org]] in emacs and run ~org-babel-tangle~ to create startup files the first time. Restart emacs.
 ** Inspiration
 /All config in one file/ from [[https://github.com/daviwil/emacs-from-scratch/tree/9388cf6ecd9b44c430867a5c3dad5f050fdc0ee1][System Crafters Emacs from Scratch]].
+
+*** Update git submodules
+Initialize the submodules.
+#+begin_src eshell :results silent
+git submodule update --init
+#+end_src
+Update the submodules to the latest remote version.
+#+begin_src eshell :results silent
+git submodule update --remote --rebase
+#+end_src
+Checkout the branch that the remote head points to.
+#+begin_src eshell :results silent
+git submodule foreach 'echo $sm_path `git rev-parse HEAD`'
+#+end_src
 ** Early init
 The file to load before ~init.el~. This will be created after ~org-babel-tangle~.
 #+begin_src emacs-lisp :tangle ./early-init.el
