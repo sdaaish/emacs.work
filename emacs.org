@@ -1335,3 +1335,8 @@ This is an http-server running in emacs.
   :commands httpd-start
   :config (customize-set-variable 'httpd-root my/org-publish-directory))
 #+end_src
+** Merriam Webster lookups
+Use the thesaurus at Merriam Webster.
+#+begin_src emacs-lisp
+(use-package mw-thesaurus)
+#+end_src
