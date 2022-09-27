@@ -227,7 +227,10 @@ Various packages
 ** Yas
 Yet Another Snippet tool.
 #+begin_src emacs-lisp
-(use-package yasnippet)
+(use-package yasnippet
+  :config (yas-reload-all)
+  :hook ((prog-mode org-mode) . (lambda ()
+                                  (yas-minor-mode 1))))
 #+end_src
 ** Extra snippets
 Load more snippets
@@ -1163,23 +1166,6 @@ For more info about this, see [[http://orgmode.org/worg/org-tutorials/org-custom
                      (org-agenda-repeating-timestamp-show-all t)
                      (org-agenda-include-inactive-timestamps t))))
            ((org-agenda-compact-blocks t)))
-
-          ("h" . "Hemma|Huset")
-          ("hh" "Agenda and Home-related tasks" tags-todo "Hemma|Huset"
-           ((agenda "")
-            (org-agenda-sorting-strategy '(priority-up effort-down))))
-          ("hc" "Todo" tags-todo "Cyklar"
-           ((agenda "")
-            (todo "TODO|IN-PROGRESS")
-            (org-agenda-sorting-strategy '(priority-up effort-down))))
-          ("hf" "Todo" tags-todo "Fordon"
-           ((agenda "")
-            (todo "TODO|IN-PROGRESS")
-            (org-agenda-sorting-strategy '(priority-up effort-down))))
-          ("hu" "Todo" tags-todo "Huset"
-           ((agenda "")
-            (todo "TODO|IN-PROGRESS")
-            (org-agenda-sorting-strategy '(priority-up effort-down))))
 
           ("w" "Agenda and Office-related tasks" tags-todo "work|office"
            ((agenda "")
