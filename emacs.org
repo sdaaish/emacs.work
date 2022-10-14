@@ -24,7 +24,7 @@ git submodule update --init
 #+end_src
 Update the submodules to the latest remote version.
 #+begin_src eshell :results silent
-git submodule update --remote --rebase
+git submodule update --remote --rebase --recursive
 #+end_src
 Checkout the branch that the remote head points to.
 #+begin_src eshell :results silent
@@ -1088,6 +1088,7 @@ From [[https://gitlab.com/spudlyo/dotfiles/-/blob/master/emacs/.config/emacs/ini
 To be able to execute code in org mode these should be loaded.
 #+begin_src emacs-lisp
 (require 'ob-shell)
+(require 'ob-eshell)
 (require 'ob-awk)
 (require 'ob-python)
 (require 'ob-C)
