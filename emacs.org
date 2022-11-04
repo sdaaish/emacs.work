@@ -396,10 +396,11 @@ From https://ianyepan.github.io/posts/emacs-emojis/
 
 ;; Custom theme from doom
 (use-package doom-themes
+  :custom
+  (doom-themes-enable-bold t)
+  (doom-themes-enable-italic t)
   :config
   (load-theme 'doom-snazzy t))
-(use-package elisp-demos)
-
 #+end_src
 *** No beeps
 #+BEGIN_SRC emacs-lisp
@@ -1044,6 +1045,102 @@ Save bookmarks all the time.
 (customize-set-variable 'bookmark-save-flag 1)
 (customize-set-variable 'bookmark-version-control t)
 #+END_SRC
+* Denote
+Try out *Denote* to take notes. For more info see the [[https://protesilaos.com/emacs/denote][Denote Manual]].
+This is mostly copied from the sample config.
+#+begin_src emacs-lisp
+(use-package denote
+  :custom
+  (denote-directory (expand-file-name "notes/" my/onedrive-dir))
+  (denote-dired-directories (expand-file-name "notes/" my/onedrive-dir))
+  (denote-date-prompt-use-org-read-date t)
+  (denote-known-keywords '("emacs" "project" "powershell"))
+  :hook
+  (dired-mode-hook . #'denote-dired-mode-in-directories)
+  (find-file-hook . #'denote-link-buttonize-buffer)
+  :bind
+  ("C-c n j" . my/denote-journal)
+  ("C-c n n" . #'denote)
+  ("C-c n N" . #'denote-type)
+  ("C-c n d" . #'denote-date)
+  ("C-c n s" . #'denote-subdirectory)
+  ("C-c n t" . #'denote-template)
+  ("C-c n i" . #'denote-link)
+  ("C-c n I" . #'denote-link-add-links)
+  ("C-c n b" . #'denote-link-backlinks)
+  ("C-c n f f" . #'denote-link-find-file)
+  ("C-c n f b" . #'denote-link-find-backlink)
+  ("C-c n r" . #'denote-rename-file)
+  ("C-c n R" . #'denote-rename-file-using-front-matter)
+  (:map dired-mode-map
+        ("C-c C-d C-i" . #'denote-link-dired-marked-notes)
+        ("C-c C-d C-r" . #'denote-dired-rename-marked-files)
+        ("C-c C-d C-R" . #'denote-dired-rename-marked-files-using-front-matter))
+  (:map org-mode-map
+        ("C-c n x" . my/denote-split-org-subtree)))
+#+end_src
+** Denote journal
+Create a journal directly with denote.
+#+begin_src emacs-lisp
+(defun my/denote-journal ()
+  "Create an entry tagged 'journal', while prompting for a title."
+  (interactive)
+  (denote
+   (denote--title-prompt)
+   '("journal")))
+#+end_src
+** Capture denote with org
+Capture notes for denote with org-capture. Create a specific template for this.
+#+begin_src emacs-lisp
+(with-eval-after-load 'org-capture
+  (setq denote-org-capture-specifiers "%l\n%i\n%?")
+  (add-to-list 'org-capture-templates
+               '("d" "New denote, note with Denote)" plain
+                 (file denote-last-path)
+                 #'denote-org-capture
+                 :no-save t
+                 :immediate-finish nil
+                 :kill-buffer t
+                 :jump-to-captured t)))
+#+end_src
+** Split org header to denote
+Inside an org-file, split the header and move it to a denote file instead.
+#+begin_src emacs-lisp
+(defun my/denote-split-org-subtree ()
+  "Create new Denote note as an Org file using current Org subtree."
+  (interactive)
+  (let ((text (org-get-entry))
+        (heading (org-get-heading :no-tags :no-todo :no-priority :no-comment))
+        (tags (org-get-tags)))
+    (delete-region (org-entry-beginning-position) (org-entry-end-position))
+    (denote heading tags 'org)
+    (insert text)))
+#+end_src
+** Denote subdirectory
+Copied from the [[https://protesilaos.com/emacs/denote][Denote manual]].
+#+begin_src emacs-lisp
+(defun my/denote-subdirectory ()
+  "Create note while prompting for a subdirectory.
+
+Available candidates include the value of the variable
+`denote-directory' and any subdirectory thereof.
+
+This is equivalent to calling `denote' when `denote-prompts' is
+set to '(subdirectory title keywords)."
+  (declare (interactive-only t))
+  (interactive)
+  (let ((denote-prompts '(subdirectory title keywords)))
+    (call-interactively #'denote)))
+#+end_src
+** Denote templates
+Templates with Denote. Syntax for this from the manual.
+#+begin_src emacs-lisp
+(customize-set-variable 'denote-templates
+                        `((meeting-notes . ,(concat "* Notes\n"
+                                                    "- Subject:\n"
+                                                    "- Date:\n"
+                                                    "- Attendees:\n"))))
+#+end_src
 * Org-mode stuff
 Read [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org Beginners Customization Guide]] for info about this.
 ** Org-mode variables
