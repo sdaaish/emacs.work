@@ -78,8 +78,12 @@ The file to load before ~init.el~. This will be created after ~org-babel-tangle~
 
 ;; Garbage collection
 ;; Increase the garbage collection threshold to make startup faster
+(defun my/garbage-collect ()
+  (setq gc-cons-threshold (* 1 1024 1024)))
+
 (setq gc-cons-threshold (* 50 1024 1024))
 (setq garbage-collection-messages nil)
+(add-hook 'after-init-hook #'my/garbage-collect)
 
 ;; From emacs-from-scratch https://github.com/daviwil/emacs-from-scratch/blob/master/init.el
 (defun efs/display-startup-time ()
@@ -133,7 +137,8 @@ Bootstrap straight.
 ** Org mode
 #+begin_src emacs-lisp
 (use-package org
-  :straight (:type git :repo "git://git.sv.gnu.org/emacs/org-mode.git"))
+  :straight (:type git :repo "git://git.sv.gnu.org/emacs/org-mode.git")
+  :bind ("C-x C-S-s" . org-save-all-org-buffers))
 #+end_src
 ** Org-contrib
 #+begin_src emacs-lisp
@@ -694,7 +699,8 @@ Changes for local keyboard.
 #+begin_src emacs-lisp
 (use-package dired
   :straight (:type built-in)
-  :hook ( dired-mode . dired-hide-details-mode))
+  :hook ( dired-mode . dired-hide-details-mode)
+  :bind ("C-x C-d" . dired))
 #+end_src
 ** Dired single
 Reuse buffers for dired
@@ -999,6 +1005,10 @@ From https://emacs-lsp.github.io/lsp-mode/page/installation/
 ** Python
 #+begin_src emacs-lisp
 (customize-set-variable 'python-indent-offset 4)
+#+end_src
+** Elpy
+#+begin_src emacs-lisp
+(use-package elpy)
 #+end_src
 * Git and projects
 ** Magit
