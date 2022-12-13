@@ -997,14 +997,12 @@ From https://emacs-lsp.github.io/lsp-mode/page/installation/
 (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
-;; optional if you want which-key integration
-(use-package which-key
-  :config
-  (which-key-mode))
 #+end_src
 ** Python
 #+begin_src emacs-lisp
 (customize-set-variable 'python-indent-offset 4)
+(customize-set-variable 'python-indent-guess-indent-offset t)
+(customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
 #+end_src
 ** Elpy
 #+begin_src emacs-lisp
@@ -1180,7 +1178,8 @@ Customize org-mode settings.
 (setq org-enable-priority-commands nil)
 (setq org-src-preserve-indentation t)
 (setq org-confirm-babel-evaluate 'my/org-confirm-babel-evaluate)
-  #+END_SRC
+(customize-set-variable 'org-clock-clocked-in-display 'both)
+#+END_SRC
 *** Refile
 Refiling notes settings.
 #+BEGIN_SRC emacs-lisp
