@@ -495,14 +495,16 @@ This was slow before, in emacs 25.1, but seems to work now in version 25.2.
 ** Undo-tree
 Make undo more intuitive.
 #+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :diminish
-    :demand
-    :config
-    (global-undo-tree-mode 1)
-    (setq undo-tree-visualizer-diff t)
-    :bind (("C-z" . undo)
-           ("C-S-z" . undo-tree-redo)))
+(use-package undo-tree
+  :diminish
+  :demand
+  :config
+  (global-undo-tree-mode 1)
+  :custom
+  (undo-tree-visualizer-diff t)
+  (undo-tree-auto-save-history nil)
+  :bind (("C-z" . undo)
+         ("C-S-z" . undo-tree-redo)))
 #+END_SRC
 ** hungry-mode
 Delete whitespace more efficiently.
