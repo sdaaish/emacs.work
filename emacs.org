@@ -292,6 +292,10 @@ User name and email among others.
 (defvar my/init-dir (file-name-directory (or load-file-name (buffer-file-name))))
 (defvar my/emacs-orgfile (expand-file-name "emacs.org" my/init-dir))
 (defvar my/emacs-elfile (expand-file-name "init.el" my/init-dir))
+;; Detect what version of OneDrive that is used, Business or Personal.
+(defconst my/onedrive-dir (let ()
+                            (cond ((getenv "OneDriveCommercial"))
+                                  ((getenv "OneDrive")))))
 (defconst my/org-directory (expand-file-name "Org/" my/onedrive-dir))
 (defconst my/notes-file (expand-file-name "inbox.org" my/org-directory))
 (defconst my/diary-file (expand-file-name "diary.org" my/org-directory))
