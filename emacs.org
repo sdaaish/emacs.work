@@ -137,13 +137,11 @@ Bootstrap straight.
 ** Org mode
 #+begin_src emacs-lisp
 (use-package org
-  :straight (:type git :repo "git://git.sv.gnu.org/emacs/org-mode.git")
   :bind ("C-x C-S-s" . org-save-all-org-buffers))
 #+end_src
 ** Org-contrib
 #+begin_src emacs-lisp
-(use-package org-contrib
-  :straight (:type git :includes (ob-arduino ob-clojure-literate ob-csharp ob-eukleides ob-fomus ob-julia ob-mathematica ob-mathomatic ob-oz ob-php ob-redis ob-sclang ob-smiles ob-spice ob-stata ob-tcl ob-vbnet ol-bookmark ol-elisp-symbol ol-git-link ol-man ol-mew ol-notmuch ol-vm ol-wl org-annotate-file org-attach-embedded-images org-bibtex-extras org-checklist org-choose org-collector org-contacts org-contribdir org-depend org-effectiveness org-eldoc org-eval org-eval-light org-expiry org-interactive-query org-invoice org-learn org-license org-mac-iCal org-mac-link org-mairix org-notify org-panel org-passwords org-registry org-screen org-screenshot org-secretary org-static-mathjax org-sudoku orgtbl-sqlinsert org-toc org-track org-velocity org-wikinodes ox-bibtex ox-confluence ox-deck ox-extra ox-freemind ox-groff ox-koma-letter ox-rss ox-s5 ox-taskjuggler) :repo "https://github.com/sdaaish/org-contrib" :files (:defaults "lisp/*.el")))
+(use-package org-contrib)
 #+end_src
 ** No littering
 #+begin_src emacs-lisp
@@ -472,13 +470,17 @@ Complete anything
 ** ace-window
 Switch windows and frames quickly.
 #+BEGIN_SRC emacs-lisp
-  (use-package ace-window
-    :config
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-    (setq aw-background nil)
-    (setq aw-dispatch-always t)
-    :bind (("M-o" . ace-window)
-           ("C-x o" . aw-flip-window)))
+(use-package ace-window
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (setq aw-background nil)
+  (setq aw-dispatch-always t)
+  :bind (("M-o" . ace-window)
+         ("C-x o" . aw-flip-window))
+  :custom-face (aw-leading-char-face
+                ((t (:foreground "light sky blue"
+                                 :background "#434343"
+                                 :weight bold :height 2.0)))))
 #+END_SRC
 ** Resize windows
 Use ~resize-window~ for changing size.
