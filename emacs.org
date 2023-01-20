@@ -1445,3 +1445,16 @@ Use the thesaurus at Merriam Webster.
 #+begin_src emacs-lisp
 (use-package mw-thesaurus)
 #+end_src
+** Chezmoi
+Use chezmoi for the dotfiles. Install the package to interact with that.
+#+begin_src emacs-lisp
+(use-package chezmoi
+  :config (setq-default chezmoi-template-display-p t)
+  :bind
+  ("C-c C f" .  #'chezmoi-find)
+  ("C-c C s" .  #'chezmoi-write)
+  :hook (chezmoi-mode-hook . (lambda ()
+                               (if chezmoi-mode
+                                   (add-to-list 'company-backends 'chezmoi-company-backend)
+                                 (delete 'chezmoi-company-backend 'company-backends)))))
+#+end_src
