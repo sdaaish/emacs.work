@@ -821,11 +821,18 @@ Powershell-mode is useful.
   (if (eq system-type 'gnu/linux)
       (setq powershell-location-of-exe "/usr/bin/pwsh")
     (setq powershell-location-of-exe "pwsh.exe"))
-  (setq explicit-powershell\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
-  (setq explicit-pwsh\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
+;;  (setq explicit-powershell\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
+;;  (setq explicit-pwsh\.exe-args '("-NoLogo" "-NoProfile" "-Command" "-"))
   (customize-set-variable 'powershell-indent 4)
   :custom-face (font-lock-variable-name-face ((t (:foreground "#d98026" :weight normal)))))
 #+END_SRC
+** Shell
+Settings for the inferior shell. Replace =cmd.exe= with =pwsh.exe= on Windows.
+#+begin_src emacs-lisp
+(cond ((eq system-type 'windows-nt)
+       (setq explicit-shell-file-name "pwsh.exe"
+             explicit-pwsh.exe-args '())))
+#+end_src
 ** Dos-mode
 Only in windows.
 #+BEGIN_SRC emacs-lisp
