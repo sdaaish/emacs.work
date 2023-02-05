@@ -232,6 +232,7 @@ Yet Another Snippet tool.
 #+begin_src emacs-lisp
 (use-package yasnippet
   :config (yas-reload-all)
+  (add-to-list 'yas-snippet-dirs (expand-file-name ".config/snippets/" "~"))
   :hook ((prog-mode org-mode) . (lambda ()
                                   (yas-minor-mode 1))))
 #+end_src
@@ -338,6 +339,9 @@ From Steve Yegge's talk on emacs. [[https://youtu.be/6ZWp05OW1c0][Stevey's Tech 
 ** Include lisp
 Include local lisp-files.
 #+begin_src emacs-lisp
+(when (file-exists-p (expand-file-name ".config/lisp/" "~"))
+  (add-to-list 'load-path (expand-file-name ".config/lisp/" "~")))
+
 (when (file-exists-p (expand-file-name "work/lisp" "~"))
   (add-to-list 'load-path (expand-file-name "work/lisp" "~"))
 	(require 'cbc.el))
