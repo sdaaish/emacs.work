@@ -1077,12 +1077,12 @@ This is mostly copied from the sample config.
 (use-package denote
   :custom
   (denote-directory (expand-file-name "notes/" my/onedrive-dir))
-  (denote-dired-directories (expand-file-name "notes/" my/onedrive-dir))
+  (denote-dired-directories (list denote-directory))
   (denote-date-prompt-use-org-read-date t)
   (denote-known-keywords '("emacs" "project" "powershell"))
   :hook
-  (dired-mode-hook . #'denote-dired-mode-in-directories)
-  (find-file-hook . #'denote-link-buttonize-buffer)
+  (dired-mode . denote-dired-mode-in-directories)
+  (find-file . denote-link-buttonize-buffer)
   :bind
   ("C-c n j" . my/denote-journal)
   ("C-c n n" . #'denote)
@@ -1464,7 +1464,7 @@ Use chezmoi for the dotfiles. Install the package to interact with that.
   :bind
   ("C-c C f" .  #'chezmoi-find)
   ("C-c C s" .  #'chezmoi-write)
-  :hook (chezmoi-mode-hook . (lambda ()
+  :hook (chezmoi-mode . (lambda ()
                                (if chezmoi-mode
                                    (add-to-list 'company-backends 'chezmoi-company-backend)
                                  (delete 'chezmoi-company-backend 'company-backends)))))
