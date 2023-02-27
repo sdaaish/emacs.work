@@ -429,7 +429,11 @@ Display time as 24-hour format
 #+BEGIN_SRC emacs-lisp
 (setq display-time-24hr-format t)
 #+END_SRC
-
+*** Large files
+Increase large files warning to 100MB.
+#+begin_src emacs-lisp
+(customize-set-variable 'large-file-warning-threshold (* 100 1024 1024))
+#+end_src
 ** Rainbows
 Use different colors for delimeters to increase readability.
 #+BEGIN_SRC emacs-lisp
@@ -728,6 +732,10 @@ Enable narrowing.
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page   'disabled nil)
+#+end_src
+** Upcase region
+#+begin_src emacs-lisp
+(put 'upcase-region 'disabled nil)
 #+end_src
 ** Change yes-or-no to y-n
 #+BEGIN_SRC emacs-lisp
