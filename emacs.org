@@ -137,7 +137,24 @@ Bootstrap straight.
 ** Org mode
 #+begin_src emacs-lisp
 (use-package org
-  :bind ("C-x C-S-s" . org-save-all-org-buffers))
+  :bind (:map org-mode-map
+              ("C-x C-S-s" . org-save-all-org-buffers)
+              ("C-c C-h" . org-tags-view))
+  :custom
+  (org-use-speed-commands t)
+  (org-speed-commands (cons '("S" . widen) org-speed-commands)))
+#+end_src
+*** Shortcut key
+Add a keybinding for =org-speed-commands=.
+From https://github.com/revrari/emacs_elements_chapter_2/blob/main/org-speed-commands.org
+#+begin_src emacs-lisp
+(defun org-jump-to-heading-beginning ()
+  "Jump to the beginning of the line of the previous Org heading."
+  (interactive)
+  (org-back-to-heading)
+  (beginning-of-line))
+
+(define-key org-mode-map (kbd "C-*") 'org-jump-to-heading-beginning)
 #+end_src
 ** Org-contrib
 #+begin_src emacs-lisp
@@ -299,7 +316,6 @@ User name and email among others.
 (defconst my/notes-file (expand-file-name "inbox.org" my/org-directory))
 (defconst my/diary-file (expand-file-name "diary.org" my/org-directory))
 (defconst my/org-agenda-files (expand-file-name ".agenda-files" my/org-directory))
-(defvar my/refile-targets (my/read-lines (expand-file-name ".target-files"  my/org-directory)))
 ;; My org-files directory
 (setq org-directory my/org-directory)
 ;; Org-agenda can read from a file
@@ -307,7 +323,7 @@ User name and email among others.
 ;; Store notes here
 (setq org-default-notes-file my/notes-file)
 ;; Choose targets for refile from this file
-(setq org-refile-targets '((my/refile-targets :maxlevel . 3)))
+(customize-set-variable 'org-refile-targets '((nil :maxlevel . 3)(org-agenda-files :maxlevel . 3)))
 #+end_src
 * Functions
 My custom functions for various stuff.
