@@ -81,7 +81,7 @@ The file to load before ~init.el~. This will be created after ~org-babel-tangle~
 (defun my/garbage-collect ()
   (setq gc-cons-threshold (* 1 1024 1024)))
 
-(setq gc-cons-threshold (* 50 1024 1024))
+(setq gc-cons-threshold (* 200 1024 1024))
 (setq garbage-collection-messages nil)
 (add-hook 'after-init-hook #'my/garbage-collect)
 
@@ -139,10 +139,10 @@ Bootstrap straight.
 (use-package org
   :bind (:map org-mode-map
               ("C-x C-S-s" . org-save-all-org-buffers)
-              ("C-c C-h" . org-tags-view))
-  :custom
-  (org-use-speed-commands t)
-  (org-speed-commands (cons '("S" . widen) org-speed-commands)))
+              ("C-c C-h" . org-tags-view)))
+;;  :custom
+;;  (org-use-speed-commands t)
+;;  (org-speed-commands (cons '("S" . widen) org-speed-commands)))
 #+end_src
 *** Shortcut key
 Add a keybinding for =org-speed-commands=.
@@ -154,7 +154,7 @@ From https://github.com/revrari/emacs_elements_chapter_2/blob/main/org-speed-com
   (org-back-to-heading)
   (beginning-of-line))
 
-(define-key org-mode-map (kbd "C-*") 'org-jump-to-heading-beginning)
+;;(define-key org-mode-map (kbd "C-*") 'org-jump-to-heading-beginning)
 #+end_src
 ** Org-contrib
 #+begin_src emacs-lisp
@@ -1045,9 +1045,24 @@ From https://emacs-lsp.github.io/lsp-mode/page/installation/
 (customize-set-variable 'python-indent-guess-indent-offset t)
 (customize-set-variable 'python-indent-guess-indent-offset-verbose nil)
 #+end_src
-** Elpy
+** Python virtual environments
+Use this to enable virtual environments in Python.
 #+begin_src emacs-lisp
-(use-package elpy)
+(use-package pyvenv)
+#+end_src
+** Elpy
+A language mode for Python.
+#+begin_src emacs-lisp
+(use-package elpy
+  :init (advice-add 'python-mode :before 'elpy-enable)
+  :hook (elpy-mode . (lambda () (add-hook 'before-save-hook
+                                         'elpy-black-fix-code nil t))))
+#+end_src
+** Flycheck
+Code checking for various languages.
+#+begin_src emacs-lisp
+(use-package flycheck
+  :hook ((elpy-mode emacs-lisp-mode) . flycheck-mode))
 #+end_src
 * Git and projects
 ** Magit
