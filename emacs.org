@@ -1064,6 +1064,16 @@ Code checking for various languages.
 (use-package flycheck
   :hook ((elpy-mode emacs-lisp-mode) . flycheck-mode))
 #+end_src
+** edit-indirect
+Neded to edit source code blocks iin Markdown.
+#+begin_src emacs-lisp
+(use-package edit-indirect)
+#+end_src
+** Mermaid
+Use Mermaid for diagrams.
+#+begin_src emacs-lisp
+(use-package mermaid-mode)
+#+end_src
 * Git and projects
 ** Magit
 Magit is a Git-tool, probably the best porcelain in the world!
