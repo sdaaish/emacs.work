@@ -1,6 +1,0 @@
-[submodule "vendor/org-html-themes"]
-	path = vendor/org-html-themes
-	url = https://github.com/fniessen/org-html-themes.git
-[submodule "vendor/reveal.js"]
-	path = vendor/reveal.js
-	url = https://github.com/hakimel/reveal.js.git
