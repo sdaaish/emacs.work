@@ -1235,11 +1235,14 @@ set to '(subdirectory title keywords)."
 ** Denote templates
 Templates with Denote. Syntax for this from the manual.
 #+begin_src emacs-lisp
-(customize-set-variable 'denote-templates
-                        `((meeting-notes . ,(concat "* Notes\n"
-                                                    "- Subject:\n"
-                                                    "- Date:\n"
-                                                    "- Attendees:\n"))))
+(with-eval-after-load 'denote
+  (customize-set-variable 'denote-templates
+                          `((meeting-notes . ,(concat "* Notes\n"
+                                                      "- Subject:\n"
+                                                      "- Date:\n"
+                                                      "- Attendees:\n"))))
+  (when (file-readable-p (expand-file-name "denote-templates.el" user-emacs-directory))
+    (load-file (expand-file-name "denote-templates.el" user-emacs-directory))))
 #+end_src
 * Org-mode stuff
 Read [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org Beginners Customization Guide]] for info about this.
