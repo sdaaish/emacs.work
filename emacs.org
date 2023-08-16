@@ -139,10 +139,10 @@ Bootstrap straight.
 (use-package org
   :bind (:map org-mode-map
               ("C-x C-S-s" . org-save-all-org-buffers)
-              ("C-c C-h" . org-tags-view)))
-;;  :custom
-;;  (org-use-speed-commands t)
-;;  (org-speed-commands (cons '("S" . widen) org-speed-commands)))
+              ("C-c C-h" . org-tags-view)
+              ("C-*" . org-jump-to-heading-beginning))
+  :hook (org-mode . (lambda ()
+                      (customize-set-variable 'org-use-speed-commands t))))
 #+end_src
 *** Shortcut key
 Add a keybinding for =org-speed-commands=.
