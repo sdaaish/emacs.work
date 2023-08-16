@@ -171,16 +171,19 @@ Reduces text in the minibar.
 #+end_src
 ** Helpful
 #+begin_src emacs-lisp
-    (use-package helpful
-    :commands (counsel-describe-function-function
-               counsel-describe-variable-function)
-    :custom-face (helpful-heading ((t (:foreground "GreenYellow" :weight bold))))
-    :bind (("C-h C" . #'helpful-command)
-           ("C-c C-h" . #'helpful-at-point)
-           ("C-h a" . #'helpful-symbol)
-           ([remap describe-key] . helpful-key)
-           ([remap describe-variable] . counsel-describe-variable)
-           ([remap describe-function] . counsel-describe-function)))
+(use-package helpful
+  :custom (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :custom-face (helpful-heading ((t (:foreground "GreenYellow" :weight bold))))
+  :bind (("C-h h" . #'helpful-at-point)
+         ("C-h C" . #'helpful-command)
+         ("C-h F" . #'helpful-function)
+         ("C-h M" . #'helpful-macro)
+         ([remap describe-key] . helpful-key)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-function] . helpful-callable)
+         ([remap describe-symbol] . helpful-callable)
+         ([remap describe-command] . helpful-command)))
 #+end_src
 ** Ivy
 #+BEGIN_SRC emacs-lisp
@@ -467,22 +470,20 @@ Colorize numbers and text.
 #+end_src
 ** Indentation
 Use aggressive mode for indentation. Used to be auto-indent, but aggressive seems better.
-#+BEGIN_SRC emacs-lisp
-  (use-package aggressive-indent
-    :config (global-aggressive-indent-mode t))
-#+END_SRC
 #+begin_src emacs-lisp
-(setq-default tab-width 2)
-(setq-default tab-always-indent 'complete)
-(setq-default indent-tabs-mode nil)
+(use-package aggressive-indent
+  :custom (global-aggressive-indent-mode t)
+  :config (setq-default tab-width 2
+                        tab-always-indent 'complete
+                        indent-tabs-mode nil))
 #+end_src
 ** which-key
 #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :diminish
-    :config
-    (which-key-mode t)
-    (setq which-key-idle-delay 0))
+(use-package which-key
+  :diminish
+  :config
+  (which-key-mode t)
+  (setq which-key-idle-delay 0))
 #+END_SRC
 ** Company-mode
 Complete anything
@@ -490,9 +491,9 @@ Complete anything
 (use-package company
   :diminish
   :config
-  (setq company-idle-delay 0
-  company-minimum-prefix-length 2)
-  (global-company-mode t))
+  (global-company-mode t)
+  :custom (company-idle-delay 0)
+  (company-minimum-prefix-length 2))
 #+END_SRC
 ** ace-window
 Switch windows and frames quickly.
@@ -1065,7 +1066,7 @@ A language mode for Python.
 Code checking for various languages.
 #+begin_src emacs-lisp
 (use-package flycheck
-  :hook ((elpy-mode emacs-lisp-mode) . flycheck-mode))
+  :hook ((go-mode elpy-mode emacs-lisp-mode) . flycheck-mode))
 #+end_src
 ** edit-indirect
 Neded to edit source code blocks iin Markdown.
@@ -1076,6 +1077,19 @@ Neded to edit source code blocks iin Markdown.
 Use Mermaid for diagrams.
 #+begin_src emacs-lisp
 (use-package mermaid-mode)
+#+end_src
+** Eglot
+Use =Eglot= as LSP integration.
+#+begin_src emacs-lisp
+(use-package eglot)
+#+end_src
+** Go
+Use the =Go= Language.
+See https://cs.opensource.google/go/x/tools/+/refs/tags/gopls/v0.13.2:gopls/doc/emacs.md
+#+begin_src emacs-lisp
+(use-package go-mode
+  :hook (go-mode . eglot-ensure)
+  (go-mode . tree-sitter-mode))
 #+end_src
 * Git and projects
 ** Magit
