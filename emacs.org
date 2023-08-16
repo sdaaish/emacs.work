@@ -267,6 +267,26 @@ Load more snippets
 (use-package ivy-yasnippet
   :bind ("C-x y" . ivy-yasnippet))
 #+end_src
+** Auto insert
+Insert template text automatically into new files. In this case, use =Yasnippet= to insert the template text. Example from [[ https://www.emacswiki.org/emacs/AutoInsertMode][EmacsWiki]].
+#+begin_src emacs-lisp
+(defun my/autoinsert-yas-expand()
+  "Replace text in yasnippet template."
+  (yas/expand-snippet (buffer-string) (point-min) (point-max)))
+
+(use-package autoinsert
+  :custom
+  (auto-insert 'other)
+  (auto-insert-query nil)
+  (auto-insert-directory "~/.config/templates/")
+  (auto-insert-alist '((("\\.sh\\'" . "Shell script") . ["template.sh" my/autoinsert-yas-expand])
+                       (("\\.el\\'" . "Emacs Lisp") . ["template.el" my/autoinsert-yas-expand])
+                       (("\\.go\\'" . "Go script") . ["template.go" my/autoinsert-yas-expand])
+                       (("\\.py\\'" . "Python script") . ["template.py" my/autoinsert-yas-expand])
+                       (("\\.ps1\\'" . "Powershell script") . ["template.ps1" my/autoinsert-yas-expand])
+                       (("\\.psm1\\'" . "Powershell Module") . ["template.psm1" my/autoinsert-yas-expand])))
+  :config (auto-insert-mode 1))
+#+end_src
 ** Silversearcher
 Use ~ag~ to search for stuff. Requires ~silversearcher-ag~ to be installed in the system.
 #+begin_src emacs-lisp
