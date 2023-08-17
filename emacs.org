@@ -1494,10 +1494,15 @@ Use Org Reveal for presentations. Is called =ox-reveal= at Melpa.
 ** Org publish
 Publish org-files to html and others.
 #+begin_src emacs-lisp
-(customize-set-variable 'org-publish-use-timestamps-flag nil)
-(setq my/org-publish-directory (expand-file-name "www/Publish" "~"))
+(custom-set-variables '(org-publish-use-timestamps-flag t)
+                      '(org-html-validation-link nil)
+                      '(org-export-with-broken-links t)
+                      '(org-html-htmlize-output-type nil))
+(setq my/org-publish-directory (expand-file-name "www/Org/" "~"))
+(setq my/denote-publish-directory (expand-file-name "www/Denote/" "~"))
 (setq org-publish-project-alist
       `(("Org" :components ("org-notes" "org-images" "org-css" "org-pdf"))
+
         ("org-notes"
          :base-directory ,my/org-directory
          :base-extension "org"
@@ -1531,6 +1536,48 @@ Publish org-files to html and others.
          :base-directory ,my/org-directory
          :base-extension "pdf"
          :publishing-directory ,(expand-file-name "static/" my/org-publish-directory)
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ;; Export notes from Denote
+        ("Denote" :components ("denote-notes" "denote-images" "denote-css" "denote-pdf"))
+        ("denote-notes"
+         :base-directory ,denote-directory
+         :base-extension "org"
+         :publishing-directory ,my/denote-publish-directory
+         :publishing-function (org-html-publish-to-html org-ascii-publish-to-ascii)
+         :recursive t
+         :headline-levels 4
+         :auto-preamble t
+         :auto-sitemap t
+         :eval never-export
+         :html-head "<link rel=\"stylesheet\"
+                    href=\"/css/simple.css\"
+                    type=\"text/css\"/>"
+         :html-head "<link rel=\"stylesheet\"
+                    href=\"/css/org.css\"
+                    type=\"text/css\"/>"
+         :html-head-extra "<style>pre.src{background:#343131;color:white;} </style>"
+         :html-validation-link nil)
+
+        ("denote-images"
+         :base-directory ,denote-directory
+         :base-extension "jpg\\|gif\\|png"
+         :recursive t
+         :publishing-directory ,my/denote-publish-directory
+         :publishing-function org-publish-attachment)
+
+        ("denote-css"
+         :base-directory ,(expand-file-name "css/" denote-directory)
+         :base-extension "css\\|js"
+         :publishing-directory ,(expand-file-name "css/" my/denote-publish-directory)
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("denote-pdf"
+         :base-directory ,denote-directory
+         :base-extension "pdf"
+         :publishing-directory ,my/denote-publish-directory
          :recursive t
          :publishing-function org-publish-attachment)))
 #+end_src
