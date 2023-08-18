@@ -347,6 +347,8 @@ User name and email among others.
 (setq org-default-notes-file my/notes-file)
 ;; Choose targets for refile from this file
 (customize-set-variable 'org-refile-targets '((nil :maxlevel . 3)(org-agenda-files :maxlevel . 3)))
+;; Denote file directory
+(defconst my/denote-directory (expand-file-name "notes/" my/onedrive-dir))
 #+end_src
 * Functions
 My custom functions for various stuff.
@@ -1211,7 +1213,11 @@ This is mostly copied from the sample config.
         ("C-c C-d C-r" . #'denote-dired-rename-marked-files)
         ("C-c C-d C-R" . #'denote-dired-rename-marked-files-using-front-matter))
   (:map org-mode-map
-        ("C-c n x" . my/denote-split-org-subtree)))
+        ("C-c n x" . my/denote-split-org-subtree))
+  :init (bind-key "C-c n F" (defun denote-find-directory ()
+                              "Open the Denote directory in dired."
+                              (interactive)
+                              (find-file denote-directory))))
 #+end_src
 ** Denote journal
 Create a journal directly with denote.
@@ -1284,30 +1290,32 @@ Read [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org Be
 *** Other variables
 Customize org-mode settings.
 #+BEGIN_SRC emacs-lisp
-(setq org-use-sub-superscripts '{})
-(setq org-export-with-sub-superscripts '{})
-(setq org-export-coding-system 'utf-8)
-(setq org-export-backends '(ascii html latex odt org))
-(setq org-export-use-babel nil)
-(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
-(setq org-agenda-skip-scheduled-if-done t)
-(setq org-agenda-skip-scheduled-if-deadline-is-shown "repeated-after-deadline")
-(setq org-agenda-include-diary nil)
-(setq org-agenda-span 14)
-(setq org-log-done 'time)
-(setq org-log-redeadline 'time)
-(setq org-log-reschedule 'time)
-(setq org-log-refile 'time)
-(setq org-log-into-drawer t)
-(setq org-enforce-todo-checkbox-dependencies t)
-(setq org-enforce-todo-dependencies t)
-(setq org-agenda-dim-blocked-tasks t)
-(setq org-fast-tag-selection-single-key t)
-(setq org-use-fast-todo-selection t)
-(setq org-enable-priority-commands nil)
-(setq org-src-preserve-indentation t)
-(setq org-confirm-babel-evaluate 'my/org-confirm-babel-evaluate)
-(customize-set-variable 'org-clock-clocked-in-display 'both)
+(custom-set-variables
+ '(org-use-sub-superscripts '{})
+ '(org-export-with-sub-superscripts '{})
+ '(org-export-coding-system 'utf-8)
+ '(org-export-backends '(ascii html latex odt org))
+ '(org-export-use-babel nil)
+ '(org-agenda-skip-deadline-prewarning-if-scheduled t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-skip-scheduled-if-deadline-is-shown "repeated-after-deadline")
+ '(org-agenda-include-diary nil)
+ '(org-agenda-span 14)
+ '(org-log-done 'time)
+ '(org-log-redeadline 'time)
+ '(org-log-reschedule 'time)
+ '(org-log-refile 'time)
+ '(org-log-into-drawer t)
+ '(org-enforce-todo-checkbox-dependencies t)
+ '(org-enforce-todo-dependencies t)
+ '(org-agenda-dim-blocked-tasks t)
+ '(org-fast-tag-selection-single-key t)
+ '(org-use-fast-todo-selection t)
+ '(org-enable-priority-commands nil)
+ '(org-src-preserve-indentation t)
+ '(org-confirm-babel-evaluate 'my/org-confirm-babel-evaluate)
+ '(org-clock-clocked-in-display 'both)
+ '(org-hide-emphasis-markers t))
 #+END_SRC
 *** Refile
 Refiling notes settings.
@@ -1542,7 +1550,7 @@ Publish org-files to html and others.
         ;; Export notes from Denote
         ("Denote" :components ("denote-notes" "denote-images" "denote-css" "denote-pdf"))
         ("denote-notes"
-         :base-directory ,denote-directory
+         :base-directory ,my/denote-directory
          :base-extension "org"
          :publishing-directory ,my/denote-publish-directory
          :publishing-function (org-html-publish-to-html org-ascii-publish-to-ascii)
@@ -1561,21 +1569,21 @@ Publish org-files to html and others.
          :html-validation-link nil)
 
         ("denote-images"
-         :base-directory ,denote-directory
+         :base-directory ,my/denote-directory
          :base-extension "jpg\\|gif\\|png"
          :recursive t
          :publishing-directory ,my/denote-publish-directory
          :publishing-function org-publish-attachment)
 
         ("denote-css"
-         :base-directory ,(expand-file-name "css/" denote-directory)
+         :base-directory ,(expand-file-name "css/" my/denote-directory)
          :base-extension "css\\|js"
          :publishing-directory ,(expand-file-name "css/" my/denote-publish-directory)
          :recursive t
          :publishing-function org-publish-attachment)
 
         ("denote-pdf"
-         :base-directory ,denote-directory
+         :base-directory ,my/denote-directory
          :base-extension "pdf"
          :publishing-directory ,my/denote-publish-directory
          :recursive t
