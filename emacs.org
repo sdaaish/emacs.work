@@ -1315,14 +1315,18 @@ Customize org-mode settings.
  '(org-src-preserve-indentation t)
  '(org-confirm-babel-evaluate 'my/org-confirm-babel-evaluate)
  '(org-clock-clocked-in-display 'both)
- '(org-hide-emphasis-markers t))
-#+END_SRC
+ '(org-hide-emphasis-markers t)
+ '(org-habit-graph-column 60)
+ '(org-habit-show-habits-only-for-today t))
+
+ #+END_SRC
 *** Refile
 Refiling notes settings.
 #+BEGIN_SRC emacs-lisp
-  (setq org-refile-use-outline-path 'file)
-  (setq org-refile-allow-creating-parent-nodes 'confirm)
-  (setq org-outline-path-complete-in-steps nil)
+(custom-set-variables
+ '(org-refile-use-outline-path 'file)
+ '(org-refile-allow-creating-parent-nodes 'confirm)
+ '(org-outline-path-complete-in-steps nil))
 #+END_SRC
 *** Custom to disable verification of evaluation.
 From [[https://gitlab.com/spudlyo/dotfiles/-/blob/master/emacs/.config/emacs/init.el][Mike Hamrick, GitLab]].
@@ -1346,6 +1350,12 @@ Execute powershell from org-mode.
 (use-package ob-powershell
   :custom (ob-powershell-powershell-command "pwsh -NoLogo -NoProfile")
   :config (require 'ob-powershell))
+#+end_src
+*** Load org modules
+Update =org-modules= with the modules I want.
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (add-to-list 'org-modules 'org-habit t))
 #+end_src
 ** Org-files
 My org-files for Todo-list and agenda. Store the filenames to use for agenda in a separate file.
@@ -1443,6 +1453,11 @@ A few templates to speed up capture.
         ;; Journal
         ("j" "Journal" entry (file+olp+datetree my/diary-file)
          "* %^{Enter title}\n%U\n%?" :clock-in t :clock-resume t)
+
+        ;; Habit
+        ("h" "New habit" entry (file+headline my/notes-file "To Do Items")
+         ,(concat "* TODO %^{Description of todo}\n"
+                  ":PROPERTIES:\n:STYLE: habit\n:ADDED: %U\n:END:\n\n%?") :prepend t)
 
         ;; Notes for code
         ("c" "Coding stuff")
