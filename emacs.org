@@ -1040,31 +1040,6 @@ For nmap script-engine files.
 #+begin_src emacs-lisp
 (defalias 'perl-mode 'cperl-mode)
 #+end_src
-** LSP
-From https://emacs-lsp.github.io/lsp-mode/page/installation/
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ((cperl-mode . lsp-deferred)
-   (powershell-mode . lsp-deferred))
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp lsp-deferred)
-
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-;; if you are ivy user
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-#+end_src
 ** Python
 #+begin_src emacs-lisp
 (customize-set-variable 'python-indent-offset 4)
@@ -1110,8 +1085,24 @@ Use the =Go= Language.
 See https://cs.opensource.google/go/x/tools/+/refs/tags/gopls/v0.13.2:gopls/doc/emacs.md
 #+begin_src emacs-lisp
 (use-package go-mode
-  :hook (go-mode . eglot-ensure)
-  (go-mode . tree-sitter-mode))
+  :hook
+  (go-mode . eglot-ensure)
+  (project-find-functions . #'project-find-go-module)
+  (go-mode . tree-sitter-mode)
+  :init (setq-default eglot-workspace-configuration
+                      '((:gopls .
+                                ((staticcheck . t)
+                                 (matcher . "CaseSensitive")))))
+  :config
+  (defun project-find-go-module (dir)
+    (when-let ((root (locate-dominating-file dir "go.mod")))
+      (cons 'go-module root)))
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project)))
+#+end_src
+** Tree sitter languages
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs)
 #+end_src
 * Git and projects
 ** Magit
