@@ -394,6 +394,7 @@ Include local lisp-files.
 (tool-bar-mode -1)
 (set-scroll-bar-mode nil)
 (menu-bar-mode -1)
+(custom-set-variables '(use-dialog-box nil))
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
