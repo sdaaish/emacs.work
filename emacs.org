@@ -106,7 +106,7 @@ The file to load before ~init.el~. This will be created after ~org-babel-tangle~
   "Measures time differences."
   (format-time-string "%M:%S.%3N" (- (float-time (current-time)) start-time)))
 
-(message "*** Started emacs @ %s" (my/format-time start-time))
+(message "*** Started Emacs @ %s" (my/format-time start-time))
 (message "*** Reading configuration from init.el...")
 #+end_src
 *** Straight
@@ -304,15 +304,15 @@ Settings for variables.
 ** Functions that load config files
 These are custom functions to load settings into list for org-agenda.
 #+begin_src emacs-lisp
-(defun my/read-lines (filePath)
-  "Return a list of lines of a file at filePath."
-  (if (file-exists-p filePath)
+(defun my/read-lines (filepath)
+  "Return a list of lines of a file at FILEPATH."
+  (if (file-exists-p filepath)
       (with-temp-buffer
-        (insert-file-contents filePath)
+        (insert-file-contents filepath)
         (split-string (buffer-string) "\n" t))))
 
 (defun my/fullpath (filepath directory)
-  "Concatenate directory to names in filepath and return as list."
+  "Concatenate DIRECTORY to names in FILEPATH and return as list."
   (let (value)
     (setq list (my/read-lines filepath))
     (dolist (shortfile list value)
@@ -355,14 +355,14 @@ My custom functions for various stuff.
 ** Open emacs org-file
 #+begin_src emacs-lisp
 (defun my/find-emacs-org-file ()
-  "Opens my emacs org config file."
+  "Opens my Emacs org config file."
   (interactive)
   (find-file (expand-file-name "emacs.org" user-emacs-directory)))
 #+end_src
-** Open emacs init-file
+** Open Emacs init-file
 #+begin_src emacs-lisp
 (defun my/find-emacs-init-file ()
-  "Opens my emacs init-file."
+  "Opens my Emacs init-file."
   (interactive)
   (find-file (expand-file-name "init.el" user-emacs-directory)))
 #+end_src
@@ -370,7 +370,7 @@ My custom functions for various stuff.
 From Steve Yegge's talk on emacs. [[https://youtu.be/6ZWp05OW1c0][Stevey's Tech Talk E41: Emacs Part 2 - Emergency Emacs]]
 #+begin_src emacs-lisp
 (defun my/steal-mouse ()
-"Moves the mouse to the upper right corner."
+"Move the mouse to the upper right corner."
   (interactive)
   (and window-system
        (set-mouse-position
@@ -540,7 +540,7 @@ Use ~resize-window~ for changing size.
     :bind ("C-;" . resize-window))
 #+END_SRC
 ** Pretty bullets
-This was slow before, in emacs 25.1, but seems to work now in version 25.2.
+This was slow before, in Emacs 25.1, but seems to work now in version 25.2.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
@@ -805,7 +805,7 @@ Shortcuts to increase font-size.
 * Backup
 Backup and autosave options, + history
 ** Backup of files
-Saves backup of files in emacs-homedir. Keeps several versions of the files.
+Saves backup of files in Emacs homedir. Keeps several versions of the files.
 #+BEGIN_SRC emacs-lisp
      ;; From https://github.com/magnars/.emacs.d
      ;; Write backup files to own directory
@@ -1041,31 +1041,6 @@ For nmap script-engine files.
 #+begin_src emacs-lisp
 (defalias 'perl-mode 'cperl-mode)
 #+end_src
-** LSP
-From https://emacs-lsp.github.io/lsp-mode/page/installation/
-#+begin_src emacs-lisp
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ((cperl-mode . lsp-deferred)
-   (powershell-mode . lsp-deferred))
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp lsp-deferred)
-
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
-;; if you are ivy user
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-#+end_src
 ** Python
 #+begin_src emacs-lisp
 (customize-set-variable 'python-indent-offset 4)
@@ -1111,8 +1086,24 @@ Use the =Go= Language.
 See https://cs.opensource.google/go/x/tools/+/refs/tags/gopls/v0.13.2:gopls/doc/emacs.md
 #+begin_src emacs-lisp
 (use-package go-mode
-  :hook (go-mode . eglot-ensure)
-  (go-mode . tree-sitter-mode))
+  :hook
+  (go-mode . eglot-ensure)
+  (project-find-functions . #'project-find-go-module)
+  (go-mode . tree-sitter-mode)
+  :init (setq-default eglot-workspace-configuration
+                      '((:gopls .
+                                ((staticcheck . t)
+                                 (matcher . "CaseSensitive")))))
+  :config
+  (defun project-find-go-module (dir)
+    (when-let ((root (locate-dominating-file dir "go.mod")))
+      (cons 'go-module root)))
+  (cl-defmethod project-root ((project (head go-module)))
+    (cdr project)))
+#+end_src
+** Tree sitter languages
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs)
 #+end_src
 * Git and projects
 ** Magit
@@ -1333,7 +1324,7 @@ Refiling notes settings.
 From [[https://gitlab.com/spudlyo/dotfiles/-/blob/master/emacs/.config/emacs/init.el][Mike Hamrick, GitLab]].
 #+begin_src emacs-lisp
 (defun my/org-confirm-babel-evaluate (lang body)
-  "Don't confirm code execution for these languages."
+  "Don't confirm code execution for LANG."
   (not (member lang '("python" "emacs-lisp" "shell" "powershell" "perl" "elisp" "eshell"))))
 #+end_src
 ** Org-modules
@@ -1379,7 +1370,7 @@ Keywords, keybindings and colors for headlines in org-mode.
           ("READ" . (:foreground "dark orange" :weight bold))
           ("BUG" . (:foreground "magenta" :weight bold))
           ("REPORT" . (:foreground "cyan" :weight bold))))
-  (bind-key "C-c l" 'org-store-link)
+  (bind-key "C-c l" 'org-store-link dired-mode-map)
   (bind-key "C-c a" 'org-agenda)
   (bind-key "C-c c" 'org-capture)
 #+END_SRC
@@ -1651,4 +1642,9 @@ Use chezmoi for the dotfiles. Install the package to interact with that.
                                (if chezmoi-mode
                                    (add-to-list 'company-backends 'chezmoi-company-backend)
                                  (delete 'chezmoi-company-backend 'company-backends)))))
+#+end_src
+* The end
+#+begin_src emacs-lisp
+(provide 'init.el)
+;;; init.el ends here
 #+end_src
