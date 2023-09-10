@@ -802,6 +802,21 @@ Shortcuts to increase font-size.
 (bind-key "C--" 'text-scale-decrease)
 (customize-set-variable 'text-scale-mode-step 1.05)
 #+end_src
+** line-numbers
+Use relative linenumbers.
+#+BEGIN_SRC emacs-lisp
+(defun my/line-number-relative ()
+  "Display relative line numbers."
+  (interactive)
+  (setq-local display-line-numbers-type 'visual)
+  (display-line-numbers-mode 'toggle))
+
+(defun my/line-number-t ()
+  "Display absolute line numbers."
+  (interactive )
+  (setq-local display-line-numbers-type t)
+  (display-line-numbers-mode 'toggle))
+#+END_SRC
 * Backup
 Backup and autosave options, + history
 ** Backup of files
@@ -1104,6 +1119,12 @@ See https://cs.opensource.google/go/x/tools/+/refs/tags/gopls/v0.13.2:gopls/doc/
 ** Tree sitter languages
 #+begin_src emacs-lisp
 (use-package tree-sitter-langs)
+#+end_src
+** Highlight indents
+#+begin_src emacs-lisp
+(use-package highlight-indent-guides
+:hook ((yaml-mode python-mode) . highlight-indent-guides-mode)
+:custom (highlight-indent-guides-method 'character))
 #+end_src
 * Git and projects
 ** Magit
