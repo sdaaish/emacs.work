@@ -48,6 +48,7 @@ The file to load before ~init.el~. This will be created after ~org-babel-tangle~
 
 ;; From Doom early-init.
 (set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8-unix)
 
 ;; From Doom, shaves off a second from startup.
 (setq-default inhibit-redisplay t
