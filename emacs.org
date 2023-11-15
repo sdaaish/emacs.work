@@ -300,6 +300,18 @@ Use ripgrep to search for files. See [[https://rgel.readthedocs.io/][Manual]].
 (use-package rg
   :config (rg-enable-default-bindings))
 #+end_src
+** Golden ratio window
+A way to adjust window width to always present the current with a larger size. Keep the =golden ratio= aspect of the view.
+#+begin_src emacs-lisp
+
+(use-package golden-ratio
+  :custom
+  (golden-ratio-recenter t)
+  (golden-ratio-auto-scale t)
+  :config
+  (golden-ratio-mode 1))
+
+#+end_src
 * Variables
 Settings for variables.
 ** Functions that load config files
