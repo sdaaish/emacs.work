@@ -1,0 +1,2 @@
+* Emacs config
+This was a repository I created to get a cleaner config for Emacs on my new job. But I going to centralize the config instead, so this is archived.
